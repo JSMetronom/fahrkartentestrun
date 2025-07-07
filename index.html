@@ -392,7 +392,7 @@
                 </div>
             </div>
                 
-            <!-- Passenger and Ticket Column -->
+                       <!-- Passenger and Ticket Column -->
             <div class="game-container p-6">
                 <h2 class="text-xl font-semibold mb-4">Fahrgast & Fahrkarte</h2>
                 
@@ -432,7 +432,7 @@
                         </div>
                         <div>
                             <p class="text-xs opacity-80">Strecke</p>
-                            <p id="ticket-route" class="font-semibold">Hamburg Hbf → Lübeck Hbf</p>
+                            <p id="ticket-route" class="font-semibold">Hamburg Hbf â†’ LÃ¼beck Hbf</p>
                         </div>
                     </div>
                 </div>
@@ -441,21 +441,21 @@
             <!-- Actions Column -->
             <div class="game-container p-6">
                 <h2 class="text-xl font-semibold mb-4">Kontrolle</h2>
-                <p class="opacity-80 mb-6">Überprüfe die Fahrkarte und entscheide, ob sie gültig ist.</p>
+                <p class="opacity-80 mb-6">ÃœberprÃ¼fe die Fahrkarte und entscheide, ob sie gÃ¼ltig ist.</p>
                 
                 <div class="space-y-4">
                     <button id="valid-btn" class="btn-primary w-full py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                         </svg>
-                        Fahrkarte gültig
+                        Fahrkarte gÃ¼ltig
                     </button>
                     
                     <button id="invalid-btn" class="btn-danger w-full py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                         </svg>
-                        Fahrkarte ungültig
+                        Fahrkarte ungÃ¼ltig
                     </button>
                 </div>
                 
@@ -476,8 +476,6 @@
         </div>
     </div>
     
-
-
     <!-- Invalid Ticket Modal -->
     <div id="invalid-modal" class="modal fixed inset-0 z-50 flex items-center justify-center hidden">
         <div class="modal-overlay absolute inset-0 bg-black opacity-50"></div>
@@ -898,8 +896,7 @@
             noTicketWriteUpBtn.addEventListener('click', () => handleNoTicketAction('writeUp'));
             noTicketPoliceBtn.addEventListener('click', () => handleNoTicketAction('police'));
         }
-        
-        // Disable buttons to prevent spamming
+  // Disable buttons to prevent spamming
         function disableButtons() {
             gameState.buttonsEnabled = false;
             validBtn.disabled = true;
@@ -1017,6 +1014,8 @@
             document.getElementById('ticket-tarif').textContent = ticket.tarif;
             document.getElementById('ticket-owner').textContent = ticket.owner;
             document.getElementById('ticket-purchase-date').textContent = `${formatDate(ticket.purchaseDate)}, ${formatTime(ticket.purchaseDate)}`;
+            
+            // Fix the arrow character in the route display
             document.getElementById('ticket-route').textContent = `${ticket.connection.start} â†’ ${ticket.connection.end}`;
             
             // Update ticket style based on tarif
@@ -1481,6 +1480,49 @@
             }, 10);
         }
         
+        // Show error modal
+        function showErrorModal(title, message) {
+            errorModalTitle.textContent = title;
+            errorModalMessage.textContent = message;
+            
+            // Hide reasons container
+            errorReasonsContainer.classList.add('hidden');
+            
+            errorModal.classList.remove('hidden');
+            setTimeout(() => {
+                errorModal.querySelector('.modal-content').style.opacity = '1';
+                errorModal.querySelector('.modal-content').style.transform = 'scale(1)';
+            }, 10);
+        }
+        
+        // Close error modal
+        function closeErrorModalHandler() {
+            const modalContent = errorModal.querySelector('.modal-content');
+            modalContent.style.opacity = '0';
+            modalContent.style.transform = 'scale(0.9)';
+            
+            setTimeout(() => {
+                errorModal.classList.add('hidden');
+                // Generate new passenger if needed
+                if (gameState.hasNoTicket) {
+                    setTimeout(generateNewPassenger, 500);
+                }
+            }, 300);
+        }
+        
+        // Close no ticket modal
+        function closeNoTicketModalHandler() {
+            const modalContent = noTicketModal.querySelector('.modal-content');
+            modalContent.style.opacity = '0';
+            modalContent.style.transform = 'scale(0.9)';
+            
+            setTimeout(() => {
+                noTicketModal.classList.add('hidden');
+                // Generate new passenger
+                setTimeout(generateNewPassenger, 500);
+            }, 300);
+        }
+        
         // Update invalid reasons list in the modal
         function updateInvalidReasonsList(container) {
             // Clear previous reasons
@@ -1593,10 +1635,10 @@
             } else {
                 const reactions = [
                     "Der Fahrgast entschuldigt sich: \"Es tut mir leid, ich habe vergessen ein Ticket zu kaufen.\"",
-                    "Der Fahrgast wirkt nervÃ¶s: \"Oh, ich dachte, ich hÃ¤tte mein Ticket dabei.\"",
-                    "Der Fahrgast zeigt bereitwillig seinen Ausweis: \"Ich zahle natÃ¼rlich das erhÃ¶hte BefÃ¶rderungsentgelt.\"",
-                    "Der Fahrgast erklÃ¤rt: \"Der Automat am Bahnhof war kaputt, ich wollte beim Schaffner kaufen.\"",
-                    "Der Fahrgast kooperiert: \"Das ist mir sehr unangenehm, wie kann ich das jetzt regeln?\""
+                    "Der Fahrgast wirkt nervÃ¶s: \"Oh, ich dachte ich hÃ¤tte noch Zeit zum Kaufen am nÃ¤chsten Bahnhof.\"",
+                    "Der Fahrgast erklÃ¤rt: \"Mein Handy ist kaputt, ich konnte kein Online-Ticket kaufen.\"",
+                    "Der Fahrgast zeigt kooperativ seinen Ausweis: \"Hier sind meine Daten, es tut mir leid.\"",
+                    "Der Fahrgast bietet an: \"Kann ich das Ticket jetzt noch bei Ihnen kaufen?\""
                 ];
                 passengerReaction.textContent = reactions[Math.floor(Math.random() * reactions.length)];
             }
@@ -1608,52 +1650,12 @@
             }, 10);
         }
         
-        // Close no ticket modal
-        function closeNoTicketModalHandler() {
-            const modalContent = noTicketModal.querySelector('.modal-content');
-            modalContent.style.opacity = '0';
-            modalContent.style.transform = 'scale(0.9)';
-            
-            setTimeout(() => {
-                noTicketModal.classList.add('hidden');
-            }, 300);
-        }
-        
-        // Show error modal
-        function showErrorModal(title, message) {
-            errorModalTitle.textContent = title;
-            errorModalMessage.textContent = message;
-            
-            // Hide reasons container
-            errorReasonsContainer.classList.add('hidden');
-            
-            errorModal.classList.remove('hidden');
-            setTimeout(() => {
-                errorModal.querySelector('.modal-content').style.opacity = '1';
-                errorModal.querySelector('.modal-content').style.transform = 'scale(1)';
-            }, 10);
-        }
-        
-        // Close error modal
-        function closeErrorModalHandler() {
-            const modalContent = errorModal.querySelector('.modal-content');
-            modalContent.style.opacity = '0';
-            modalContent.style.transform = 'scale(0.9)';
-            
-            setTimeout(() => {
-                errorModal.classList.add('hidden');
-                // Generate new passenger
-                setTimeout(generateNewPassenger, 500);
-            }, 300);
-        }
-        
         // Update score and progress
         function updateScore(correct) {
             if (correct) {
                 gameState.score += 10;
                 gameState.correctDecisions++;
             } else {
-                gameState.score = Math.max(0, gameState.score - 5);
                 gameState.wrongDecisions++;
             }
             
@@ -1690,181 +1692,13 @@
             
             // Increase difficulty
             if (gameState.level > 1) {
-                // Increase tickets per level
-                gameState.ticketsPerLevel = 10 + (gameState.level - 1) * 5;
+                // Reduce the chance of valid tickets as level increases
+                gameState.validTicketChance = Math.max(0.3, 0.7 - (gameState.level - 1) * 0.1);
                 
-                // Update progress text
-                progressText.textContent = `0/${gameState.ticketsPerLevel}`;
+                // Increase tickets per level
+                gameState.ticketsPerLevel = Math.min(20, 10 + (gameState.level - 1) * 2);
             }
         }
-        
-        // Generate sample data if Excel files are not found
-        function generateSampleData() {
-            // Sample tickets data
-            gameState.ticketsData = [
-                {
-                    tarif: "HVV",
-                    name: "Einzelfahrt Zone A",
-                    validity: "1 Stunde",
-                    personCount: "1",
-                    transferable: "ja",
-                    ageRestriction: "egal"
-                },
-                {
-                    tarif: "HVV",
-                    name: "Tageskarte Zone A-C",
-                    validity: "f.T.",
-                    personCount: "1",
-                    transferable: "nein",
-                    ageRestriction: "egal"
-                },
-                {
-                    tarif: "DB",
-                    name: "ICE Hamburg-Berlin",
-                    validity: "f.T.",
-                    personCount: "1",
-                    transferable: "nein",
-                    ageRestriction: "egal"
-                },
-                {
-                    tarif: "BVG",
-                    name: "Einzelfahrt AB",
-                    validity: "2 Stunden",
-                    personCount: "1",
-                    transferable: "ja",
-                    ageRestriction: "egal"
-                },
-                {
-                    tarif: "MVV",
-                    name: "Streifenkarte",
-                    validity: "1 Stunde",
-                    personCount: "1",
-                    transferable: "ja",
-                    ageRestriction: "egal"
-                },
-                {
-                    tarif: "DB",
-                    name: "SchÃ¶nes-Wochenende-Ticket",
-                    validity: "f.T.",
-                    personCount: "5",
-                    transferable: "ja",
-                    ageRestriction: "egal"
-                },
-                {
-                    tarif: "VBB",
-                    name: "Monatskarte",
-                    validity: "f.M.",
-                    personCount: "1",
-                    transferable: "nein",
-                    ageRestriction: "egal"
-                },
-                {
-                    tarif: "DB",
-                    name: "Bahncard 50",
-                    validity: "1 Jahr",
-                    personCount: "1",
-                    transferable: "nein",
-                    ageRestriction: "egal"
-                },
-                {
-                    tarif: "VGN",
-                    name: "TagesTicket Plus",
-                    validity: "f.T.",
-                    personCount: "2+4",
-                    transferable: "ja",
-                    ageRestriction: "egal"
-                },
-                {
-                    tarif: "RMV",
-                    name: "Einzelfahrt Frankfurt-Mainz",
-                    validity: "3 Stunden",
-                    personCount: "1",
-                    transferable: "ja",
-                    ageRestriction: "egal"
-                }
-            ];
-            
-            // Sample connections data
-            gameState.connectionsData = {
-                "RB31": [
-                    {
-                        start: "Hamburg Hbf",
-                        end: "LÃ¼beck Hbf",
-                        requiredTarif: "HVV"
-                    },
-                    {
-                        start: "LÃ¼beck Hbf",
-                        end: "TravemÃ¼nde Strand",
-                        requiredTarif: "DB"
-                    }
-                ],
-                "ICE1557": [
-                    {
-                        start: "Hamburg Hbf",
-                        end: "Berlin Hbf",
-                        requiredTarif: "DB"
-                    },
-                    {
-                        start: "Berlin Hbf",
-                        end: "MÃ¼nchen Hbf",
-                        requiredTarif: "DB"
-                    }
-                ],
-                "S1": [
-                    {
-                        start: "Hamburg Altona",
-                        end: "Hamburg Hbf",
-                        requiredTarif: "HVV"
-                    },
-                    {
-                        start: "Hamburg Hbf",
-                        end: "Hamburg Airport",
-                        requiredTarif: "HVV"
-                    }
-                ],
-                "U2": [
-                    {
-                        start: "Berlin Pankow",
-                        end: "Berlin Alexanderplatz",
-                        requiredTarif: "BVG"
-                    },
-                    {
-                        start: "Berlin Alexanderplatz",
-                        end: "Berlin Ruhleben",
-                        requiredTarif: "BVG"
-                    }
-                ],
-                "S8": [
-                    {
-                        start: "MÃ¼nchen Hbf",
-                        end: "MÃ¼nchen Flughafen",
-                        requiredTarif: "MVV"
-                    },
-                    {
-                        start: "MÃ¼nchen Pasing",
-                        end: "MÃ¼nchen Hbf",
-                        requiredTarif: "MVV"
-                    }
-                ]
-            };
-            
-            // Update UI
-            loadingStatus.textContent = "Beispieldaten geladen (keine Excel-Dateien gefunden)";
-            loadingStatus.classList.add('text-blue-600');
-            loadingSpinner.style.borderLeftColor = '#3b82f6';
-            
-            // Show train selection
-            showTrainSelectors();
-        }
-        
-        // Fallback to sample data if files are not found
-        setTimeout(() => {
-            if (!gameState.ticketsData || !gameState.connectionsData) {
-                generateSampleData();
-            }
-        }, 5000);
     </script>
 </body>
-</html>
-
 </html>
