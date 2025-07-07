@@ -391,6 +391,7 @@
                     </div>
                 </div>
             </div>
+            
             <!-- Passenger and Ticket Column -->
             <div class="game-container p-6">
                 <h2 class="text-xl font-semibold mb-4">Fahrgast & Fahrkarte</h2>
@@ -431,7 +432,7 @@
                         </div>
                         <div>
                             <p class="text-xs opacity-80">Strecke</p>
-                            <p id="ticket-route" class="font-semibold">Hamburg Hbf â†’ LÃ¼beck Hbf</p>
+                            <p id="ticket-route" class="font-semibold">Hamburg Hbf → Lübeck Hbf</p>
                         </div>
                     </div>
                 </div>
@@ -440,21 +441,21 @@
             <!-- Actions Column -->
             <div class="game-container p-6">
                 <h2 class="text-xl font-semibold mb-4">Kontrolle</h2>
-                <p class="opacity-80 mb-6">ÃœberprÃ¼fe die Fahrkarte und entscheide, ob sie gÃ¼ltig ist.</p>
+                <p class="opacity-80 mb-6">Überprüfe die Fahrkarte und entscheide, ob sie gültig ist.</p>
                 
                 <div class="space-y-4">
                     <button id="valid-btn" class="btn-primary w-full py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                         </svg>
-                        Fahrkarte gÃ¼ltig
+                        Fahrkarte gültig
                     </button>
                     
                     <button id="invalid-btn" class="btn-danger w-full py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                         </svg>
-                        Fahrkarte ungÃ¼ltig
+                        Fahrkarte ungültig
                     </button>
                 </div>
                 
@@ -480,7 +481,7 @@
         <div class="modal-overlay absolute inset-0 bg-black opacity-50"></div>
         <div class="modal-content bg-white w-11/12 md:max-w-md mx-auto rounded-lg shadow-lg z-50 overflow-y-auto p-6">
             <div class="flex justify-between items-center pb-3">
-                <h3 class="text-xl font-bold">UngÃ¼ltige Fahrkarte</h3>
+                <h3 class="text-xl font-bold">Ungültige Fahrkarte</h3>
                 <button id="close-invalid-modal" class="modal-close text-gray-500 hover:text-gray-700">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -490,7 +491,7 @@
             
             <div id="invalid-reasons-container" class="my-4">
                 <div class="invalid-reason mb-4">
-                    <h4 class="font-medium mb-2">GrÃ¼nde fÃ¼r die UngÃ¼ltigkeit:</h4>
+                    <h4 class="font-medium mb-2">Gründe für die Ungültigkeit:</h4>
                     <div id="invalid-reasons-list">
                         <!-- Reasons will be inserted here dynamically -->
                     </div>
@@ -498,12 +499,12 @@
             </div>
             
             <div class="mb-4">
-                <p>Wie mÃ¶chtest du vorgehen?</p>
+                <p>Wie möchtest du vorgehen?</p>
             </div>
             
             <div class="flex flex-col space-y-3">
                 <button id="write-up-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded transition">
-                    Aufschreiben (BuÃŸgeld)
+                    Aufschreiben (Bußgeld)
                 </button>
                 <button id="call-police-btn" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition">
                     Polizei rufen
@@ -552,12 +553,12 @@
             </div>
             
             <div class="my-4 p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
-                <p id="error-modal-message">Diese Fahrkarte ist ungÃ¼ltig.</p>
+                <p id="error-modal-message">Diese Fahrkarte ist ungültig.</p>
             </div>
             
             <div id="error-reasons-container" class="my-4 hidden">
                 <div class="invalid-reason">
-                    <h4 class="font-medium mb-2">GrÃ¼nde fÃ¼r die UngÃ¼ltigkeit:</h4>
+                    <h4 class="font-medium mb-2">Gründe für die Ungültigkeit:</h4>
                     <div id="error-reasons-list">
                         <!-- Reasons will be inserted here dynamically -->
                     </div>
@@ -599,7 +600,7 @@
         
         // Names for random generation
         const firstNames = ["Max", "Anna", "Leon", "Sophie", "Tim", "Lena", "Paul", "Julia", "Felix", "Laura", "Jonas", "Emma", "David", "Sarah", "Lukas", "Lisa", "Finn", "Marie", "Jan", "Lea"];
-        const lastNames = ["MÃ¼ller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Schulz", "Hoffmann", "SchÃ¤fer", "Koch", "Bauer", "Richter", "Klein", "Wolf", "SchrÃ¶der", "Neumann", "Schwarz", "Zimmermann"];
+        const lastNames = ["Müller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Schulz", "Hoffmann", "Schäfer", "Koch", "Bauer", "Richter", "Klein", "Wolf", "Schröder", "Neumann", "Schwarz", "Zimmermann"];
         
         // DOM Elements
         const setupScreen = document.getElementById('setup-screen');
@@ -806,74 +807,59 @@
         
         // Process connections data from Excel
         function processConnectionsData(workbook) {
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: "A" });
+            
             const processedData = {};
             
-            // Process each sheet (train line)
-            workbook.SheetNames.forEach(sheetName => {
-                const worksheet = workbook.Sheets[sheetName];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: "A" });
-                
-                const connections = [];
-                
-                for (let i = 1; i < jsonData.length; i++) { // Skip header row
-                    const row = jsonData[i];
-                    if (row.A && row.B && row.C) { // Ensure start, end, and required tarif exist
-                        connections.push({
-                            start: row.A,
-                            end: row.B,
-                            requiredTarif: row.C
-                        });
+            for (let i = 1; i < jsonData.length; i++) { // Skip header row
+                const row = jsonData[i];
+                if (row.A && row.B && row.C && row.D) { // Ensure all required fields exist
+                    const trainLine = row.A;
+                    
+                    if (!processedData[trainLine]) {
+                        processedData[trainLine] = [];
                     }
+                    
+                    processedData[trainLine].push({
+                        start: row.B,
+                        end: row.C,
+                        requiredTarif: row.D
+                    });
                 }
-                
-                if (connections.length > 0) {
-                    processedData[sheetName] = connections;
-                }
-            });
+            }
             
             return processedData;
         }
         
-        // Start the game
+        // Start game
         function startGame() {
-            // Check if we have valid data
-            if (!gameState.ticketsData || gameState.ticketsData.length === 0) {
-                alert("Keine gÃ¼ltigen Fahrkartendaten gefunden. Bitte versuche es spÃ¤ter erneut.");
+            if (!gameState.selectedTrain) {
+                showErrorModal("Fehler", "Bitte wähle eine Zugverbindung aus.");
                 return;
             }
             
-            if (!gameState.connectionsData[gameState.selectedTrain] || 
-                gameState.connectionsData[gameState.selectedTrain].length === 0) {
-                alert(`Keine gÃ¼ltigen Verbindungsdaten fÃ¼r ${gameState.selectedTrain} gefunden. Bitte wÃ¤hle eine andere Zugverbindung.`);
-                return;
-            }
+            // Show loading overlay
+            loadingOverlay.classList.remove('hidden');
             
-            // Hide setup screen and show game screen
-            setupScreen.classList.add('hidden');
-            gameScreen.classList.remove('hidden');
-            
-            // Update current train display
-            currentTrainElement.textContent = `Zugverbindung: ${gameState.selectedTrain}`;
-            
-            // Initialize the game
-            initGame();
+            // Hide setup screen and show game screen after a short delay
+            setTimeout(() => {
+                setupScreen.classList.add('hidden');
+                gameScreen.classList.remove('hidden');
+                loadingOverlay.classList.add('hidden');
+                
+                // Initialize game
+                initGame();
+            }, 1000);
         }
         
         // Initialize game
         function initGame() {
-            gameState.simulationStartTime = new Date();
-            gameState.currentTime = new Date(gameState.simulationStartTime);
+            // Set current train
+            currentTrainElement.textContent = `Zugverbindung: ${gameState.selectedTrain}`;
             
-            updateDateTime();
-            setInterval(() => {
-                // Advance simulation time by 5 minutes each real minute
-                gameState.currentTime = new Date(gameState.currentTime.getTime() + 5 * 60000);
-                updateDateTime();
-            }, 60000);
-            
-            generateNewPassenger();
-            
-            // Event listeners
+            // Set up event listeners
             validBtn.addEventListener('click', () => {
                 if (gameState.buttonsEnabled) {
                     disableButtons();
@@ -888,793 +874,522 @@
                 }
             });
             
+            // Invalid ticket modal
             closeInvalidModal.addEventListener('click', closeModal);
             writeUpBtn.addEventListener('click', () => handleInvalidAction('writeUp'));
             callPoliceBtn.addEventListener('click', () => handleInvalidAction('police'));
+            
+            // No ticket modal
             closeNoTicketModal.addEventListener('click', closeNoTicketModalHandler);
             noTicketWriteUpBtn.addEventListener('click', () => handleNoTicketAction('writeUp'));
             noTicketPoliceBtn.addEventListener('click', () => handleNoTicketAction('police'));
+            
+            // Set simulation start time
+            gameState.simulationStartTime = new Date();
+            gameState.currentTime = new Date(gameState.simulationStartTime);
+            
+            // Update date and time display
+            updateDateTime();
+            
+            // Start time simulation
+            setInterval(() => {
+                // Advance time by 5 minutes
+                gameState.currentTime = new Date(gameState.currentTime.getTime() + 5 * 60000);
+                updateDateTime();
+            }, 30000); // Update every 30 seconds in real time
+            
+            // Generate first passenger
+            generateNewPassenger();
         }
 
 
-        // Disable buttons to prevent spamming
-        function disableButtons() {
-            gameState.buttonsEnabled = false;
-            validBtn.disabled = true;
-            validBtn.classList.add('btn-disabled');
-            invalidBtn.disabled = true;
-            invalidBtn.classList.add('btn-disabled');
-        }
-        
-        // Enable buttons
-        function enableButtons() {
-            gameState.buttonsEnabled = true;
-            validBtn.disabled = false;
-            validBtn.classList.remove('btn-disabled');
-            invalidBtn.disabled = false;
-            invalidBtn.classList.remove('btn-disabled');
-        }
-        
         // Update date and time display
         function updateDateTime() {
-            const now = gameState.currentTime;
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const day = now.getDate().toString().padStart(2, '0');
-            const month = (now.getMonth() + 1).toString().padStart(2, '0');
-            const year = now.getFullYear();
+            const options = { hour: '2-digit', minute: '2-digit', hour12: false };
+            currentTimeElement.textContent = gameState.currentTime.toLocaleTimeString('de-DE', options) + ' Uhr';
             
-            const monthNames = ["Januar", "Februar", "MÃ¤rz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
-            
-            currentTimeElement.textContent = `${hours}:${minutes} Uhr`;
-            currentDateElement.textContent = `${day}. ${monthNames[now.getMonth()]} ${year}`;
+            const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+            currentDateElement.textContent = gameState.currentTime.toLocaleDateString('de-DE', dateOptions);
         }
         
-        // Generate a new passenger with ticket
+        // Generate new passenger
         function generateNewPassenger() {
-            // Enable buttons for the new passenger
+            // Reset state
+            gameState.invalidReasons = [];
+            gameState.isTicketValid = false;
+            gameState.hasNoTicket = false;
+            gameState.isPassengerAggressive = false;
+            
+            // Enable buttons
             enableButtons();
             
-            // Reset invalid reasons
-            gameState.invalidReasons = [];
-            
-            // Determine if passenger has no ticket (5% chance)
-            gameState.hasNoTicket = Math.random() < 0.05;
-            
-            if (gameState.hasNoTicket) {
+            // Randomly decide if passenger has no ticket (10% chance)
+            if (Math.random() < 0.1) {
                 generatePassengerWithoutTicket();
-            } else {
-                generatePassengerWithTicket();
+                return;
             }
+            
+            // Generate passenger data
+            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+            const fullName = `${firstName} ${lastName}`;
+            const age = Math.floor(Math.random() * 70) + 16; // Age between 16 and 85
+            
+            // Decide on companions (20% chance to have companions)
+            let companions = "keine";
+            let companionCount = 0;
+            if (Math.random() < 0.2) {
+                companionCount = Math.floor(Math.random() * 3) + 1; // 1-3 companions
+                companions = companionCount === 1 ? "1 Erwachsener" : `${companionCount} Erwachsene`;
+            }
+            
+            // Store passenger data
+            gameState.currentPassenger = {
+                firstName,
+                lastName,
+                fullName,
+                age,
+                companions,
+                companionCount
+            };
+            
+            // Generate a ticket for the passenger
+            generateTicket();
+            
+            // Update passenger UI
+            updatePassengerUI();
         }
         
         // Generate passenger without ticket
         function generatePassengerWithoutTicket() {
+            // Generate passenger data
             const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
             const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
             const fullName = `${firstName} ${lastName}`;
-            const age = Math.floor(Math.random() * 60) + 16; // Age between 16 and 75
-            const initialLetter = firstName.charAt(0);
+            const age = Math.floor(Math.random() * 70) + 16; // Age between 16 and 85
             
-            // Determine if passenger is aggressive (50% chance)
+            // No companions for passengers without tickets
+            const companions = "keine";
+            const companionCount = 0;
+            
+            // Store passenger data
+            gameState.currentPassenger = {
+                firstName,
+                lastName,
+                fullName,
+                age,
+                companions,
+                companionCount
+            };
+            
+            // Set no ticket flag
+            gameState.hasNoTicket = true;
+            
+            // 50% chance for aggressive behavior
             gameState.isPassengerAggressive = Math.random() < 0.5;
             
-            // Update passenger profile
-            document.getElementById('passenger-name').textContent = fullName;
-            document.getElementById('passenger-age').textContent = `${age} Jahre`;
-            document.getElementById('passenger-initial').textContent = initialLetter;
-            document.getElementById('passenger-companions').textContent = "Allein reisend";
+            // Update passenger UI
+            updatePassengerUI();
             
             // Hide ticket container
-            document.getElementById('ticket-container').style.display = 'none';
-            
-            gameState.currentPassenger = {
-                name: fullName,
-                age: age,
-                hasNoTicket: true,
-                isAggressive: gameState.isPassengerAggressive
-            };
-            
-            gameState.isTicketValid = false;
-            gameState.invalidReasons.push("Fahrgast hat keine Fahrkarte");
+            ticketContainer.classList.add('hidden');
         }
         
-        // Generate passenger with ticket
-        function generatePassengerWithTicket() {
-            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-            const fullName = `${firstName} ${lastName}`;
-            const age = Math.floor(Math.random() * 60) + 16; // Age between 16 and 75
-            const initialLetter = firstName.charAt(0);
+        // Generate ticket
+        function generateTicket() {
+            // Get available connections for the selected train
+            const connections = gameState.connectionsData[gameState.selectedTrain];
+            if (!connections || connections.length === 0) {
+                showErrorModal("Fehler", "Keine Verbindungen fÃ¼r diese Zugverbindung gefunden.");
+                return;
+            }
             
-            // Get ticket data
-            const ticketData = gameState.ticketsData[Math.floor(Math.random() * gameState.ticketsData.length)];
+            // Select a random connection
+            const connectionIndex = Math.floor(Math.random() * connections.length);
+            const connection = connections[connectionIndex];
+            gameState.currentConnection = connection;
             
-            // Get connection data for the selected train
-            const trainConnections = gameState.connectionsData[gameState.selectedTrain];
-            const connectionData = trainConnections[Math.floor(Math.random() * trainConnections.length)];
+            // Get available tickets for this connection
+            const availableTickets = gameState.ticketsData.filter(ticket => 
+                ticket.tarif === connection.requiredTarif
+            );
             
-            // Determine if ticket should be valid (70% chance)
+            if (availableTickets.length === 0) {
+                showErrorModal("Fehler", `Keine Tickets fÃ¼r den Tarif ${connection.requiredTarif} gefunden.`);
+                return;
+            }
+            
+            // Select a random ticket
+            const ticketIndex = Math.floor(Math.random() * availableTickets.length);
+            const baseTicket = availableTickets[ticketIndex];
+            
+            // Create a copy of the ticket to modify
+            const ticket = { ...baseTicket };
+            
+            // Decide if the ticket should be valid (70% chance)
             const shouldBeValid = Math.random() < 0.7;
             
-            // Create ticket with potential issues
-            const ticket = createTicket(ticketData, connectionData, fullName, age, shouldBeValid);
+            // Purchase date (between 0-24 hours ago)
+            const purchaseDate = new Date(gameState.currentTime);
+            purchaseDate.setHours(purchaseDate.getHours() - Math.floor(Math.random() * 24));
             
-            // Update passenger profile
-            document.getElementById('passenger-name').textContent = fullName;
-            document.getElementById('passenger-age').textContent = `${age} Jahre`;
-            document.getElementById('passenger-initial').textContent = initialLetter;
-            
-            // Set companions based on ticket
-            const companions = parsePersonCount(ticket.personCount);
-            document.getElementById('passenger-companions').textContent = companions;
-            
-            // Update ticket display
-            document.getElementById('ticket-container').style.display = 'block';
-            document.getElementById('ticket-name').textContent = ticket.name;
-            document.getElementById('ticket-tarif').textContent = ticket.tarif;
-            document.getElementById('ticket-owner').textContent = ticket.owner;
-            document.getElementById('ticket-purchase-date').textContent = `${formatDate(ticket.purchaseDate)}, ${formatTime(ticket.purchaseDate)}`;
-            
-            // Fix the arrow character in the route display
-            document.getElementById('ticket-route').textContent = `${ticket.connection.start} â†’ ${ticket.connection.end}`;
-            
-            // Update ticket style based on tarif
-            updateTicketStyle(ticket.tarif);
-            
-            // Store current passenger and ticket
-            gameState.currentPassenger = {
-                name: fullName,
-                age: age,
-                hasNoTicket: false
-            };
-            
-            gameState.currentTicket = ticket;
-            gameState.currentConnection = connectionData;
-            gameState.isTicketValid = ticket.isValid;
-            
-            // Store invalid reasons if ticket is not valid
-            if (!ticket.isValid) {
-                if (ticket.invalidReason) {
-                    gameState.invalidReasons.push(ticket.invalidReason);
-                }
-                
-                // Check for additional issues
-                if (ticket.owner !== fullName && ticket.transferable === "nein") {
-                    gameState.invalidReasons.push("Name stimmt nicht Ã¼berein (nicht Ã¼bertragbar)");
-                }
-                
-                if (ticket.tarif !== connectionData.requiredTarif) {
-                    gameState.invalidReasons.push(`Falscher Tarif fÃ¼r diese Strecke (benÃ¶tigt: ${connectionData.requiredTarif})`);
-                }
-                
-                // If no specific reason was found, add a generic one
-                if (gameState.invalidReasons.length === 0) {
-                    gameState.invalidReasons.push("Fahrkarte entspricht nicht den Anforderungen");
-                }
-            }
-        }
-        
-        // Parse person count
-        function parsePersonCount(personCount) {
-            if (personCount === "1") {
-                return "Allein reisend";
-            } else if (personCount.includes("+")) {
-                const parts = personCount.split("+");
-                const adults = parseInt(parts[0]) || 1;
-                const children = parseInt(parts[1]) || 0;
-                
-                let result = "";
-                if (adults > 0) {
-                    result += `${adults} ${adults === 1 ? "Erwachsener" : "Erwachsene"}`;
-                }
-                if (children > 0) {
-                    if (result) result += ", ";
-                    result += `${children} ${children === 1 ? "Kind" : "Kinder"}`;
-                }
-                return result;
+            // Set ticket owner
+            if (ticket.transferable === "nein") {
+                // For non-transferable tickets, use passenger name
+                ticket.owner = gameState.currentPassenger.fullName;
             } else {
-                const count = parseInt(personCount) || 1;
-                return `${count} ${count === 1 ? "Person" : "Personen"}`;
-            }
-        }
-        
-        // Update ticket style based on tarif
-        function updateTicketStyle(tarif) {
-            // Remove all ticket-* classes
-            ticketContainer.className = ticketContainer.className.replace(/ticket-\w+/g, '');
-            
-            // Add base ticket class
-            ticketContainer.classList.add('ticket');
-            
-            // Add specific tarif class
-            const tarifLower = tarif.toLowerCase().replace(/\./g, '');
-            const tarifClass = `ticket-${tarifLower}`;
-            
-            // Check if we have a specific style for this tarif
-            const validTarifs = ['hvv', 'bvg', 'mvv', 'vbb', 'vgn', 'rmv', 'vrr', 'vrs', 'nahsh', 'vmv', 'metronom', 'mdv', 'vvo', 'saarvv', 'vmt'];
-            
-            if (validTarifs.includes(tarifLower)) {
-                ticketContainer.classList.add(tarifClass);
-            } else {
-                ticketContainer.classList.add('ticket-default');
-            }
-        }
-        
-        // Format date as DD.MM.YYYY
-        function formatDate(date) {
-            return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
-        }
-        
-        // Format time as HH:MM Uhr
-        function formatTime(date) {
-            return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')} Uhr`;
-        }
-        
-        // Create a ticket with potential issues
-        function createTicket(ticketData, connectionData, passengerName, passengerAge, shouldBeValid) {
-            const now = new Date(gameState.currentTime);
-            
-            // Create purchase date (between 7 days ago and now)
-            let purchaseDate = new Date(now);
-            
-            // For invalid tickets, we might set purchase date further in the past
-            if (!shouldBeValid && Math.random() < 0.6) {
-                // Set purchase date between 1 and 30 days ago
-                const daysAgo = Math.floor(Math.random() * 30) + 1;
-                purchaseDate.setDate(purchaseDate.getDate() - daysAgo);
-            } else {
-                // Set purchase date between 0 and 6 days ago
-                const hoursAgo = Math.floor(Math.random() * 144); // Up to 6 days (144 hours)
-                purchaseDate.setHours(purchaseDate.getHours() - hoursAgo);
-            }
-            
-            // Round minutes to 5-minute intervals for more realistic times
-            purchaseDate.setMinutes(Math.floor(purchaseDate.getMinutes() / 5) * 5);
-            
-            let isValid = shouldBeValid;
-            let invalidReason = "";
-            
-            // Process validity rule
-            const validityRule = ticketData.validity;
-            
-            // Check if ticket is valid based on purchase date and validity rule
-            let timeValid = isTicketTimeValid(purchaseDate, validityRule, now, passengerAge, ticketData.ageRestriction);
-            
-            // Check if tarif is valid for the connection
-            let tarifValid = ticketData.tarif === connectionData.requiredTarif;
-            
-            // If we want the ticket to be valid/invalid but it's not, adjust accordingly
-            if (shouldBeValid) {
-                if (!timeValid) {
-                    // Make time valid by adjusting purchase date
-                    purchaseDate = adjustPurchaseDateForValidity(validityRule, now, true);
-                    timeValid = true;
-                }
-                
-                if (!tarifValid && Math.random() < 0.5) {
-                    // Make tarif valid by using the required tarif (50% chance)
-                    ticketData = { ...ticketData, tarif: connectionData.requiredTarif };
-                    tarifValid = true;
-                }
-                
-                isValid = timeValid && tarifValid;
-            } else {
-                if (timeValid && tarifValid) {
-                    // Make invalid by either time or tarif
-                    if (Math.random() < 0.5) {
-                        // Make time invalid
-                        purchaseDate = adjustPurchaseDateForValidity(validityRule, now, false);
-                        timeValid = false;
-                        invalidReason = "Abgelaufene GÃ¼ltigkeit";
-                    } else {
-                        // Make tarif invalid
-                        // Get all unique tarifs from connections data
-                        const allTarifs = new Set();
-                        Object.values(gameState.connectionsData).forEach(connections => {
-                            connections.forEach(conn => {
-                                allTarifs.add(conn.requiredTarif);
-                            });
-                        });
-                        
-                        // Convert Set to Array and filter out the required tarif
-                        const tarifArray = Array.from(allTarifs);
-                        const validTarifs = tarifArray.filter(t => t !== connectionData.requiredTarif);
-                        
-                        if (validTarifs.length > 0) {
-                            ticketData = { ...ticketData, tarif: validTarifs[Math.floor(Math.random() * validTarifs.length)] };
-                            tarifValid = false;
-                            invalidReason = "Falscher Tarif fÃ¼r diese Strecke";
-                        }
-                    }
-                    
-                    isValid = false;
-                }
-            }
-            
-            // Check transferability
-            let ticketOwner = passengerName;
-            if (ticketData.transferable === "nein" && !shouldBeValid) {
-                // 50% chance to make name different if ticket should be invalid
+                // For transferable tickets, 50% chance to have a different name
                 if (Math.random() < 0.5) {
                     const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];
                     const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-                    ticketOwner = `${randomFirstName} ${randomLastName}`;
-                    isValid = false;
-                    invalidReason = "Name stimmt nicht Ã¼berein";
-                }
-            }
-            
-            // Check age restrictions
-            if (isValid && ticketData.ageRestriction !== "egal") {
-                isValid = checkAgeRestriction(passengerAge, ticketData.ageRestriction);
-                if (!isValid) {
-                    invalidReason = "Altersgrenze nicht erfÃ¼llt";
-                }
-            }
-            
-            return {
-                tarif: ticketData.tarif,
-                name: ticketData.name,
-                owner: ticketOwner,
-                purchaseDate: purchaseDate,
-                validityRule: validityRule,
-                personCount: ticketData.personCount,
-                transferable: ticketData.transferable,
-                ageRestriction: ticketData.ageRestriction,
-                connection: connectionData,
-                isValid: isValid,
-                invalidReason: invalidReason
-            };
-        }
-        
-        // Check if ticket is valid based on purchase date and validity rule
-        function isTicketTimeValid(purchaseDate, validityRule, currentTime, passengerAge, ageRestriction) {
-            // Check age restriction first
-            if (ageRestriction !== "egal" && !checkAgeRestriction(passengerAge, ageRestriction)) {
-                return false;
-            }
-            
-            if (validityRule.includes("Uhr")) {
-                // Specific time validity
-                const timeMatch = validityRule.match(/(\d+):(\d+)/);
-                if (timeMatch) {
-                    const hours = parseInt(timeMatch[1]);
-                    const minutes = parseInt(timeMatch[2]);
-                    
-                    // Create a date object for the validity time on the same day
-                    const validityTime = new Date(currentTime);
-                    validityTime.setHours(hours, minutes, 0, 0);
-                    
-                    // If the validity time is earlier than current time on the same day,
-                    // the ticket is valid from that time
-                    return validityTime <= currentTime;
-                }
-            } else if (validityRule === "f.T.") {
-                // Valid until end of next day after purchase
-                const validUntil = new Date(purchaseDate);
-                validUntil.setDate(validUntil.getDate() + 1);
-                validUntil.setHours(23, 59, 59, 999);
-                return currentTime <= validUntil;
-            } else if (validityRule === "f.M.") {
-                // Valid until end of next month after purchase
-                const validUntil = new Date(purchaseDate);
-                validUntil.setMonth(validUntil.getMonth() + 1, 0); // Last day of next month
-                validUntil.setHours(23, 59, 59, 999);
-                return currentTime <= validUntil;
-            } else if (validityRule === "f.W.") {
-                // Valid for 7 days after purchase
-                const validUntil = new Date(purchaseDate);
-                validUntil.setDate(validUntil.getDate() + 7);
-                validUntil.setHours(23, 59, 59, 999);
-                return currentTime <= validUntil;
-            } else if (validityRule.includes("Minuten")) {
-                // Minutes validity
-                const minutesMatch = validityRule.match(/(\d+)/);
-                if (minutesMatch) {
-                    const minutes = parseInt(minutesMatch[1]);
-                    const validUntil = new Date(purchaseDate.getTime() + minutes * 60000);
-                    return currentTime <= validUntil;
-                }
-            } else if (validityRule.includes("Stunde")) {
-                // Hours validity
-                const hoursMatch = validityRule.match(/(\d+)/);
-                if (hoursMatch) {
-                    const hours = parseInt(hoursMatch[1]);
-                    const validUntil = new Date(purchaseDate.getTime() + hours * 3600000);
-                    return currentTime <= validUntil;
-                }
-            } else if (validityRule.includes("Tag")) {
-                // Days validity
-                const daysMatch = validityRule.match(/(\d+)/);
-                if (daysMatch) {
-                    const days = parseInt(daysMatch[1]);
-                    const validUntil = new Date(purchaseDate);
-                    validUntil.setDate(validUntil.getDate() + days);
-                    validUntil.setHours(23, 59, 59, 999);
-                    return currentTime <= validUntil;
-                }
-            } else if (validityRule.includes("von") && validityRule.includes("bis")) {
-                // Time window validity (e.g., "von 9 bis 18")
-                const timeWindowMatch = validityRule.match(/von (\d+) bis (\d+)/);
-                if (timeWindowMatch) {
-                    const startHour = parseInt(timeWindowMatch[1]);
-                    const endHour = parseInt(timeWindowMatch[2]);
-                    
-                    const currentHour = currentTime.getHours();
-                    return currentHour >= startHour && currentHour < endHour;
-                }
-            }
-            
-            // Default: assume 1 hour validity if no rule matches
-            const validUntil = new Date(purchaseDate.getTime() + 3600000);
-            return currentTime <= validUntil;
-        }
-        
-        // Check age restriction
-        function checkAgeRestriction(age, restriction) {
-            if (restriction === "egal") {
-                return true;
-            } else if (restriction.startsWith("ab ")) {
-                const minAge = parseInt(restriction.substring(3));
-                return age >= minAge;
-            } else if (restriction.startsWith("bis ")) {
-                const maxAge = parseInt(restriction.substring(4));
-                return age <= maxAge;
-            } else if (restriction.startsWith("zwischen ")) {
-                const ageRange = restriction.substring(9).split(" und ");
-                const minAge = parseInt(ageRange[0]);
-                const maxAge = parseInt(ageRange[1]);
-                return age >= minAge && age <= maxAge;
-            }
-            return true;
-        }
-        
-        // Adjust purchase date to make ticket valid or invalid
-        function adjustPurchaseDateForValidity(validityRule, currentTime, makeValid) {
-            const adjustedDate = new Date(currentTime);
-            
-            if (validityRule.includes("Uhr")) {
-                // For specific time validity, we don't need to adjust purchase date
-                return adjustedDate;
-            } else if (validityRule === "f.T.") {
-                if (makeValid) {
-                    // Make valid: set purchase date to yesterday
-                    adjustedDate.setDate(adjustedDate.getDate() - 1);
+                    ticket.owner = `${randomFirstName} ${randomLastName}`;
                 } else {
-                    // Make invalid: set purchase date to 2 days ago
-                    adjustedDate.setDate(adjustedDate.getDate() - 2);
+                    ticket.owner = gameState.currentPassenger.fullName;
                 }
-            } else if (validityRule === "f.M.") {
-                if (makeValid) {
-                    // Make valid: set purchase date to current month
-                    // No change needed, as it's valid until end of next month
-                } else {
-                    // Make invalid: set purchase date to 2 months ago
-                    adjustedDate.setMonth(adjustedDate.getMonth() - 2);
-                }
-            } else if (validityRule === "f.W.") {
-                if (makeValid) {
-                    // Make valid: set purchase date to 3 days ago
-                    adjustedDate.setDate(adjustedDate.getDate() - 3);
-                } else {
-                    // Make invalid: set purchase date to 8 days ago
-                    adjustedDate.setDate(adjustedDate.getDate() - 8);
-                }
-            } else if (validityRule.includes("Minuten")) {
-                const minutesMatch = validityRule.match(/(\d+)/);
-                if (minutesMatch) {
-                    const minutes = parseInt(minutesMatch[1]);
-                    if (makeValid) {
-                        // Make valid: set purchase date to half the validity period ago
-                        adjustedDate.setMinutes(adjustedDate.getMinutes() - Math.floor(minutes / 2));
-                    } else {
-                        // Make invalid: set purchase date to more than the validity period ago
-                        adjustedDate.setMinutes(adjustedDate.getMinutes() - (minutes + 5));
-                    }
-                }
-            } else if (validityRule.includes("Stunde")) {
-                const hoursMatch = validityRule.match(/(\d+)/);
-                if (hoursMatch) {
-                    const hours = parseInt(hoursMatch[1]);
-                    if (makeValid) {
-                        // Make valid: set purchase date to half the validity period ago
-                        adjustedDate.setHours(adjustedDate.getHours() - Math.floor(hours / 2));
-                    } else {
-                        // Make invalid: set purchase date to more than the validity period ago
-                        adjustedDate.setHours(adjustedDate.getHours() - (hours + 1));
-                    }
-                }
-            } else if (validityRule.includes("Tag")) {
-                const daysMatch = validityRule.match(/(\d+)/);
-                if (daysMatch) {
-                    const days = parseInt(daysMatch[1]);
-                    if (makeValid) {
-                        // Make valid: set purchase date to half the validity period ago
-                        adjustedDate.setDate(adjustedDate.getDate() - Math.floor(days / 2));
-                    } else {
-                        // Make invalid: set purchase date to more than the validity period ago
-                        adjustedDate.setDate(adjustedDate.getDate() - (days + 1));
-                    }
-                }
-            } else if (validityRule.includes("von") && validityRule.includes("bis")) {
-                // For time window validity, adjust the current time instead
-                const timeWindowMatch = validityRule.match(/von (\d+) bis (\d+)/);
-                if (timeWindowMatch) {
-                    const startHour = parseInt(timeWindowMatch[1]);
-                    const endHour = parseInt(timeWindowMatch[2]);
-                    
-                    if (makeValid) {
-                        // Make valid: set current hour to middle of valid window
-                        const middleHour = Math.floor((startHour + endHour) / 2);
-                        adjustedDate.setHours(middleHour, 30, 0, 0);
-                    } else {
-                        // Make invalid: set current hour outside valid window
-                        if (startHour > 12) {
-                            // If start hour is after noon, set to early morning
-                            adjustedDate.setHours(startHour - 3, 0, 0, 0);
+            }
+            
+            // If ticket should be invalid, introduce an error
+            if (!shouldBeValid) {
+                const errorType = Math.floor(Math.random() * 4);
+                
+                switch (errorType) {
+                    case 0: // Wrong name on non-transferable ticket
+                        if (ticket.transferable === "nein") {
+                            const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                            const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                            ticket.owner = `${randomFirstName} ${randomLastName}`;
+                            gameState.invalidReasons.push("Name auf der Fahrkarte stimmt nicht mit dem Ausweis Ã¼berein");
                         } else {
-                            // Otherwise set to evening
-                            adjustedDate.setHours(endHour + 1, 0, 0, 0);
+                            // If ticket is transferable, make it expired instead
+                            purchaseDate.setHours(purchaseDate.getHours() - 48);
+                            gameState.invalidReasons.push("Fahrkarte ist abgelaufen");
+                        }
+                        break;
+                        
+                    case 1: // Expired ticket
+                        purchaseDate.setHours(purchaseDate.getHours() - 48);
+                        gameState.invalidReasons.push("Fahrkarte ist abgelaufen");
+                        break;
+                        
+                    case 2: // Wrong tarif
+                        const availableTarifs = [...new Set(gameState.ticketsData.map(t => t.tarif))];
+                        const wrongTarifs = availableTarifs.filter(t => t !== connection.requiredTarif);
+                        if (wrongTarifs.length > 0) {
+                            const wrongTarif = wrongTarifs[Math.floor(Math.random() * wrongTarifs.length)];
+                            ticket.tarif = wrongTarif;
+                            gameState.invalidReasons.push(`Falscher Tarif (${wrongTarif} statt ${connection.requiredTarif})`);
+                        } else {
+                            // If no other tarifs available, make it expired instead
+                            purchaseDate.setHours(purchaseDate.getHours() - 48);
+                            gameState.invalidReasons.push("Fahrkarte ist abgelaufen");
+                        }
+                        break;
+                        
+                    case 3: // Too many companions
+                        if (gameState.currentPassenger.companionCount === 0) {
+                            // If no companions, add some
+                            gameState.currentPassenger.companionCount = parseInt(ticket.personCount) + 1;
+                            gameState.currentPassenger.companions = `${gameState.currentPassenger.companionCount} Erwachsene`;
+                            gameState.invalidReasons.push(`Zu viele Personen fÃ¼r diese Fahrkarte (max. ${ticket.personCount})`);
+                        } else {
+                            // If already has companions, make it expired instead
+                            purchaseDate.setHours(purchaseDate.getHours() - 48);
+                            gameState.invalidReasons.push("Fahrkarte ist abgelaufen");
+                        }
+                        break;
+                }
+            } else {
+                // For valid tickets, ensure the number of companions is valid
+                if (gameState.currentPassenger.companionCount > 0) {
+                    // Ensure the ticket allows for the number of companions
+                    if (parseInt(ticket.personCount) < gameState.currentPassenger.companionCount + 1) {
+                        // Adjust companions to match ticket
+                        const allowedCompanions = Math.max(0, parseInt(ticket.personCount) - 1);
+                        gameState.currentPassenger.companionCount = allowedCompanions;
+                        if (allowedCompanions === 0) {
+                            gameState.currentPassenger.companions = "keine";
+                        } else if (allowedCompanions === 1) {
+                            gameState.currentPassenger.companions = "1 Erwachsener";
+                        } else {
+                            gameState.currentPassenger.companions = `${allowedCompanions} Erwachsene`;
                         }
                     }
                 }
             }
             
-            return adjustedDate;
+            // Store ticket data
+            gameState.currentTicket = {
+                ...ticket,
+                purchaseDate,
+                route: `${connection.start} â†’ ${connection.end}`
+            };
+            
+            // Set ticket validity flag
+            gameState.isTicketValid = shouldBeValid;
+            
+            // Update ticket UI
+            updateTicketUI();
         }
         
-        // Handle ticket decision
-        function handleDecision(userDecision) {
-            if (gameState.hasNoTicket) {
-                // Passenger has no ticket
-                if (userDecision === false) {
-                    // User correctly identified that there's no valid ticket
-                    showNoTicketModal();
-                } else {
-                    // User incorrectly marked as valid
-                    showErrorModal("Fehler", "Der Fahrgast hat keine Fahrkarte!");
-                    updateScore(false);
-                }
-            } else {
-                // Passenger has a ticket
-                const correctDecision = userDecision === gameState.isTicketValid;
-                
-                if (correctDecision) {
-                    // User made the correct decision
-                    updateScore(true);
-                    // Generate new passenger immediately for correct decisions
-                    generateNewPassenger();
-                } else {
-                    // User made the wrong decision
-                    if (userDecision) {
-                        // User incorrectly marked an invalid ticket as valid
-                        showErrorModalWithReasons("UngÃ¼ltige Fahrkarte", "Diese Fahrkarte ist nicht gÃ¼ltig!");
-                        updateScore(false);
-                    } else {
-                        // User incorrectly marked a valid ticket as invalid
-                        showErrorModal("GÃ¼ltige Fahrkarte", "Diese Fahrkarte ist gÃ¼ltig! Du hast einen Fehler gemacht.");
-                        updateScore(false);
-                    }
-                }
-                
-                // If user marked as invalid and ticket is actually invalid, show the invalid modal
-                if (!userDecision && !gameState.isTicketValid) {
-                    showInvalidModal();
-                }
+        // Update passenger UI
+        function updatePassengerUI() {
+            const passenger = gameState.currentPassenger;
+            
+            // Update passenger info
+            document.getElementById('passenger-initial').textContent = passenger.firstName.charAt(0);
+            document.getElementById('passenger-name').textContent = passenger.fullName;
+            document.getElementById('passenger-age').textContent = `${passenger.age} Jahre`;
+            document.getElementById('passenger-companions').textContent = passenger.companions;
+            
+            // Show ticket container if passenger has a ticket
+            if (!gameState.hasNoTicket) {
+                ticketContainer.classList.remove('hidden');
             }
         }
         
-        // Show error modal with reasons for invalid ticket
-        function showErrorModalWithReasons(title, message) {
-            errorModalTitle.textContent = title;
-            errorModalMessage.textContent = message;
+        // Update ticket UI
+        function updateTicketUI() {
+            if (gameState.hasNoTicket) return;
             
-            // Show reasons container and update reasons list
-            errorReasonsContainer.classList.remove('hidden');
-            updateInvalidReasonsList(errorReasonsList);
+            const ticket = gameState.currentTicket;
             
-            errorModal.classList.remove('hidden');
-            setTimeout(() => {
-                errorModal.querySelector('.modal-content').style.opacity = '1';
-                errorModal.querySelector('.modal-content').style.transform = 'scale(1)';
-            }, 10);
+            // Update ticket class
+            ticketContainer.className = 'ticket p-4 pl-6 relative';
+            ticketContainer.classList.add(`ticket-${ticket.tarif.toLowerCase()}` || 'ticket-default');
+            
+            // Update ticket info
+            document.getElementById('ticket-name').textContent = ticket.name;
+            document.getElementById('ticket-tarif').textContent = ticket.tarif;
+            document.getElementById('ticket-owner').textContent = ticket.owner;
+            
+            // Format purchase date
+            const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+            const formattedDate = ticket.purchaseDate.toLocaleDateString('de-DE', options).replace(',', '') + ' Uhr';
+            document.getElementById('ticket-purchase-date').textContent = formattedDate;
+            
+            // Update route
+            document.getElementById('ticket-route').textContent = ticket.route;
         }
         
-        // Show error modal
-        function showErrorModal(title, message) {
-            errorModalTitle.textContent = title;
-            errorModalMessage.textContent = message;
-            
-            // Hide reasons container
-            errorReasonsContainer.classList.add('hidden');
-            
-            errorModal.classList.remove('hidden');
-            setTimeout(() => {
-                errorModal.querySelector('.modal-content').style.opacity = '1';
-                errorModal.querySelector('.modal-content').style.transform = 'scale(1)';
-            }, 10);
-        }
-        
-        // Close error modal
-        function closeErrorModalHandler() {
-            const modalContent = errorModal.querySelector('.modal-content');
-            modalContent.style.opacity = '0';
-            modalContent.style.transform = 'scale(0.9)';
-            
-            setTimeout(() => {
-                errorModal.classList.add('hidden');
-                // Generate new passenger if needed
-                if (gameState.hasNoTicket) {
-                    setTimeout(generateNewPassenger, 500);
+        // Handle decision
+        function handleDecision(isValid) {
+            if (gameState.hasNoTicket) {
+                // If passenger has no ticket
+                if (isValid) {
+                    // Wrong decision - passenger has no ticket but was marked as valid
+                    gameState.wrongDecisions++;
+                    showErrorModal("Falsche Entscheidung", "Der Fahrgast hat keine Fahrkarte!");
+                } else {
+                    // Correct decision - passenger has no ticket and was marked as invalid
+                    gameState.correctDecisions++;
+                    showNoTicketModal();
                 }
+            } else {
+                // If passenger has a ticket
+                if (isValid === gameState.isTicketValid) {
+                    // Correct decision
+                    gameState.correctDecisions++;
+                    gameState.score += 10;
+                    
+                    if (isValid) {
+                        showErrorModal("Richtige Entscheidung", "Die Fahrkarte ist gÃ¼ltig.");
+                    } else {
+                        showInvalidTicketModal();
+                    }
+                } else {
+                    // Wrong decision
+                    gameState.wrongDecisions++;
+                    
+                    if (isValid) {
+                        showErrorModal("Falsche Entscheidung", "Die Fahrkarte ist ungÃ¼ltig!", gameState.invalidReasons);
+                    } else {
+                        showErrorModal("Falsche Entscheidung", "Die Fahrkarte ist gÃ¼ltig!");
+                    }
+                }
+            }
+            
+            // Update stats
+            updateStats();
+            
+            // Advance progress
+            gameState.ticketsChecked++;
+            gameState.progress = (gameState.ticketsChecked / gameState.ticketsPerLevel) * 100;
+            
+            // Update progress bar
+            updateProgressBar();
+            
+            // Check if level is complete
+            if (gameState.ticketsChecked >= gameState.ticketsPerLevel) {
+                // Level up
+                levelUp();
+            } else {
+                // Generate new passenger after a delay
+                setTimeout(() => {
+                    generateNewPassenger();
+                }, 1500);
+            }
+        }
+        
+        // Show invalid ticket modal
+        function showInvalidTicketModal() {
+            // Clear previous reasons
+            invalidReasonsList.innerHTML = '';
+            
+            // Add reasons
+            gameState.invalidReasons.forEach(reason => {
+                const item = document.createElement('div');
+                item.className = 'invalid-reason-item';
+                item.innerHTML = `
+                    <svg class="invalid-reason-icon h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                    </svg>
+                    <span>${reason}</span>
+                `;
+                invalidReasonsList.appendChild(item);
+            });
+            
+            // Show modal
+            invalidModal.classList.remove('hidden');
+            invalidModal.classList.add('show');
+        }
+        
+        // Show no ticket modal
+        function showNoTicketModal() {
+            // Update passenger reaction based on aggressiveness
+            if (gameState.isPassengerAggressive) {
+                passengerReaction.innerHTML = `
+                    <p>Der Fahrgast reagiert aggressiv und verweigert die Angabe seiner Personalien.</p>
+                `;
+            } else {
+                passengerReaction.innerHTML = `
+                    <p>Der Fahrgast gibt zu, keine Fahrkarte zu haben und entschuldigt sich.</p>
+                `;
+            }
+            
+            // Show modal
+            noTicketModal.classList.remove('hidden');
+            noTicketModal.classList.add('show');
+        }
+        
+        // Close modal
+        function closeModal() {
+            invalidModal.classList.remove('show');
+            setTimeout(() => {
+                invalidModal.classList.add('hidden');
             }, 300);
         }
         
         // Close no ticket modal
         function closeNoTicketModalHandler() {
-            const modalContent = noTicketModal.querySelector('.modal-content');
-            modalContent.style.opacity = '0';
-            modalContent.style.transform = 'scale(0.9)';
-            
+            noTicketModal.classList.remove('show');
             setTimeout(() => {
                 noTicketModal.classList.add('hidden');
-                // Generate new passenger
-                setTimeout(generateNewPassenger, 500);
             }, 300);
         }
         
-        // Update invalid reasons list in the modal
-        function updateInvalidReasonsList(container) {
-            // Clear previous reasons
-            container.innerHTML = '';
-            
-            // Add each reason as a list item
-            gameState.invalidReasons.forEach(reason => {
-                const reasonItem = document.createElement('div');
-                reasonItem.className = 'invalid-reason-item';
-                reasonItem.innerHTML = `
-                    <svg class="invalid-reason-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                    </svg>
-                    <span>${reason}</span>
-                `;
-                container.appendChild(reasonItem);
-            });
-            
-            // If no reasons are available, add a generic one
-            if (gameState.invalidReasons.length === 0) {
-                const reasonItem = document.createElement('div');
-                reasonItem.className = 'invalid-reason-item';
-                reasonItem.innerHTML = `
-                    <svg class="invalid-reason-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                    </svg>
-                    <span>Fahrkarte entspricht nicht den Anforderungen</span>
-                `;
-                container.appendChild(reasonItem);
-            }
+        // Close error modal
+        function closeErrorModalHandler() {
+            errorModal.classList.remove('show');
+            setTimeout(() => {
+                errorModal.classList.add('hidden');
+            }, 300);
         }
         
-        // Handle action for invalid ticket
+        // Show error modal
+        function showErrorModal(title, message, reasons = null) {
+            errorModalTitle.textContent = title;
+            errorModalMessage.textContent = message;
+            
+            if (reasons && reasons.length > 0) {
+                // Clear previous reasons
+                errorReasonsList.innerHTML = '';
+                
+                // Add reasons
+                reasons.forEach(reason => {
+                    const item = document.createElement('div');
+                    item.className = 'invalid-reason-item';
+                    item.innerHTML = `
+                        <svg class="invalid-reason-icon h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                        <span>${reason}</span>
+                    `;
+                    errorReasonsList.appendChild(item);
+                });
+                
+                errorReasonsContainer.classList.remove('hidden');
+            } else {
+                errorReasonsContainer.classList.add('hidden');
+            }
+            
+            // Show modal
+            errorModal.classList.remove('hidden');
+            errorModal.classList.add('show');
+        }
+        
+        // Handle invalid ticket action
         function handleInvalidAction(action) {
+            // Close modal
             closeModal();
             
-            if (!gameState.isTicketValid) {
-                // Ticket is actually invalid
-                updateScore(true);
-            } else {
-                // Ticket is actually valid
-                updateScore(false);
+            // Add points based on action
+            if (action === 'writeUp') {
+                gameState.score += 5;
+                showErrorModal("BuÃŸgeld", "Der Fahrgast muss ein erhÃ¶htes BefÃ¶rderungsentgelt zahlen.");
+            } else if (action === 'police') {
+                // Only give points if passenger was aggressive
+                if (gameState.isPassengerAggressive) {
+                    gameState.score += 10;
+                    showErrorModal("Polizei", "Die Polizei wurde gerufen und kÃ¼mmert sich um den Fahrgast.");
+                } else {
+                    gameState.score -= 5;
+                    showErrorModal("Ãœberreaktion", "Die Polizei zu rufen war nicht notwendig. Der Fahrgast hÃ¤tte auch mit einem BuÃŸgeld bestraft werden kÃ¶nnen.");
+                }
             }
             
-            // Generate new passenger
-            generateNewPassenger();
+            // Update stats
+            updateStats();
         }
         
-        // Handle action for passenger with no ticket
+        // Handle no ticket action
         function handleNoTicketAction(action) {
+            // Close modal
             closeNoTicketModalHandler();
             
-            if (gameState.isPassengerAggressive) {
-                // Aggressive passenger
-                if (action === 'police') {
-                    updateScore(true);
+            // Add points based on action and passenger behavior
+            if (action === 'writeUp') {
+                if (gameState.isPassengerAggressive) {
+                    gameState.score += 0;
+                    showErrorModal("Schwierig", "Der Fahrgast verweigert die Angabe seiner Personalien. Du kannst das BuÃŸgeld nicht ausstellen.");
                 } else {
-                    updateScore(false);
+                    gameState.score += 5;
+                    showErrorModal("BuÃŸgeld", "Der Fahrgast akzeptiert das BuÃŸgeld und zahlt das erhÃ¶hte BefÃ¶rderungsentgelt.");
                 }
-            } else {
-                // Cooperative passenger
-                if (action === 'writeUp') {
-                    updateScore(true);
+            } else if (action === 'police') {
+                if (gameState.isPassengerAggressive) {
+                    gameState.score += 10;
+                    showErrorModal("Polizei", "Die Polizei wurde gerufen und kÃ¼mmert sich um den aggressiven Fahrgast.");
                 } else {
-                    updateScore(false);
+                    gameState.score -= 5;
+                    showErrorModal("Ãœberreaktion", "Die Polizei zu rufen war nicht notwendig. Der kooperative Fahrgast hÃ¤tte auch mit einem BuÃŸgeld bestraft werden kÃ¶nnen.");
                 }
             }
             
-            // Generate new passenger
-            generateNewPassenger();
+            // Update stats
+            updateStats();
         }
         
-        // Show invalid ticket modal
-        function showInvalidModal() {
-            // Update the invalid reasons list
-            updateInvalidReasonsList(invalidReasonsList);
-            
-            invalidModal.classList.remove('hidden');
-            setTimeout(() => {
-                invalidModal.querySelector('.modal-content').style.opacity = '1';
-                invalidModal.querySelector('.modal-content').style.transform = 'scale(1)';
-            }, 10);
-        }
-        
-        // Close modal
-        function closeModal() {
-            const modalContent = invalidModal.querySelector('.modal-content');
-            modalContent.style.opacity = '0';
-            modalContent.style.transform = 'scale(0.9)';
-            
-            setTimeout(() => {
-                invalidModal.classList.add('hidden');
-                // Generate new passenger
-                setTimeout(generateNewPassenger, 500);
-            }, 300);
-        }
-        
-        // Show no ticket modal
-        function showNoTicketModal() {
-            // Set passenger reaction based on aggressiveness
-            if (gameState.isPassengerAggressive) {
-                const reactions = [
-                    "Der Fahrgast wird aggressiv: \"Ich gebe Ihnen gar nichts! Lassen Sie mich in Ruhe!\"",
-                    "Der Fahrgast zieht eine Flasche Alkohol heraus und trinkt demonstrativ.",
-                    "Der Fahrgast schreit: \"Ich kenne meine Rechte! Sie kÃ¶nnen mir gar nichts!\"",
-                    "Der Fahrgast verweigert die Angabe seiner Personalien und wird laut.",
-                    "Der Fahrgast droht: \"Wenn Sie mich nicht in Ruhe lassen, werden Sie es bereuen!\""
-                ];
-                passengerReaction.textContent = reactions[Math.floor(Math.random() * reactions.length)];
-            } else {
-                const reactions = [
-                    "Der Fahrgast entschuldigt sich: \"Es tut mir leid, ich habe vergessen ein Ticket zu kaufen.\"",
-                    "Der Fahrgast wirkt nervÃ¶s: \"Oh, ich dachte ich hÃ¤tte noch Zeit zum Kaufen am nÃ¤chsten Bahnhof.\"",
-                    "Der Fahrgast erklÃ¤rt: \"Mein Handy ist kaputt, ich konnte kein Online-Ticket kaufen.\"",
-                    "Der Fahrgast zeigt kooperativ seinen Ausweis: \"Hier sind meine Daten, es tut mir leid.\"",
-                    "Der Fahrgast bietet an: \"Kann ich das Ticket jetzt noch bei Ihnen kaufen?\""
-                ];
-                passengerReaction.textContent = reactions[Math.floor(Math.random() * reactions.length)];
-            }
-            
-            noTicketModal.classList.remove('hidden');
-            setTimeout(() => {
-                noTicketModal.querySelector('.modal-content').style.opacity = '1';
-                noTicketModal.querySelector('.modal-content').style.transform = 'scale(1)';
-            }, 10);
-        }
-        
-        // Update score and progress
-        function updateScore(correct) {
-            if (correct) {
-                gameState.score += 10;
-                gameState.correctDecisions++;
-            } else {
-                gameState.wrongDecisions++;
-            }
-            
-            // Update UI
+        // Update stats
+        function updateStats() {
             scoreElement.textContent = gameState.score;
             correctDecisionsElement.textContent = gameState.correctDecisions;
             wrongDecisionsElement.textContent = gameState.wrongDecisions;
-            
-            // Update progress
-            gameState.ticketsChecked++;
-            gameState.progress = (gameState.ticketsChecked / gameState.ticketsPerLevel) * 100;
+        }
+        
+        // Update progress bar
+        function updateProgressBar() {
             progressFill.style.width = `${gameState.progress}%`;
             progressText.textContent = `${gameState.ticketsChecked}/${gameState.ticketsPerLevel}`;
-            
-            // Check if level is complete
-            if (gameState.ticketsChecked >= gameState.ticketsPerLevel) {
-                levelUp();
-            }
         }
         
         // Level up
@@ -1682,25 +1397,109 @@
             gameState.level++;
             gameState.ticketsChecked = 0;
             gameState.progress = 0;
+            gameState.ticketsPerLevel += 5; // Increase tickets per level
             
             // Update UI
             levelElement.textContent = gameState.level;
-            progressFill.style.width = '0%';
-            progressText.textContent = `0/${gameState.ticketsPerLevel}`;
+            updateProgressBar();
             
             // Show level up message
-            showErrorModal("Level aufgestiegen!", `GlÃ¼ckwunsch! Du bist jetzt Level ${gameState.level}. Die Schwierigkeit wird erhÃ¶ht.`);
+            showErrorModal("Level Up!", `Du hast Level ${gameState.level} erreicht! Die Schwierigkeit steigt.`);
             
-            // Increase difficulty
-            if (gameState.level > 1) {
-                // Reduce the chance of valid tickets as level increases
-                gameState.validTicketChance = Math.max(0.3, 0.7 - (gameState.level - 1) * 0.1);
-                
-                // Increase tickets per level
-                gameState.ticketsPerLevel = Math.min(20, 10 + (gameState.level - 1) * 2);
-            }
+            // Generate new passenger after a delay
+            setTimeout(() => {
+                generateNewPassenger();
+            }, 1500);
+        }
+        
+        // Disable buttons
+        function disableButtons() {
+            gameState.buttonsEnabled = false;
+            validBtn.classList.add('btn-disabled');
+            invalidBtn.classList.add('btn-disabled');
+        }
+        
+        // Enable buttons
+        function enableButtons() {
+            gameState.buttonsEnabled = true;
+            validBtn.classList.remove('btn-disabled');
+            invalidBtn.classList.remove('btn-disabled');
+        }
+        
+        // Mock data for testing when Excel files are not available
+        function createMockData() {
+            // Mock tickets data
+            gameState.ticketsData = [
+                {
+                    tarif: "HVV",
+                    name: "Einzelfahrt Zone A",
+                    validity: "1 Stunde",
+                    personCount: "1",
+                    transferable: "ja",
+                    ageRestriction: "egal"
+                },
+                {
+                    tarif: "HVV",
+                    name: "Tageskarte Zone A-C",
+                    validity: "f.T.",
+                    personCount: "1",
+                    transferable: "nein",
+                    ageRestriction: "egal"
+                },
+                {
+                    tarif: "HVV",
+                    name: "Gruppenkarte Zone A-D",
+                    validity: "1 Tag",
+                    personCount: "5",
+                    transferable: "ja",
+                    ageRestriction: "egal"
+                },
+                {
+                    tarif: "DB",
+                    name: "ICE Ticket",
+                    validity: "1 Tag",
+                    personCount: "1",
+                    transferable: "nein",
+                    ageRestriction: "egal"
+                },
+                {
+                    tarif: "DB",
+                    name: "Quer-durchs-Land-Ticket",
+                    validity: "1 Tag",
+                    personCount: "5",
+                    transferable: "ja",
+                    ageRestriction: "egal"
+                }
+            ];
+            
+            // Mock connections data
+            gameState.connectionsData = {
+                "RB31": [
+                    {
+                        start: "Hamburg Hbf",
+                        end: "LÃ¼beck Hbf",
+                        requiredTarif: "HVV"
+                    },
+                    {
+                        start: "LÃ¼beck Hbf",
+                        end: "TravemÃ¼nde Strand",
+                        requiredTarif: "HVV"
+                    }
+                ],
+                "ICE 1234": [
+                    {
+                        start: "Hamburg Hbf",
+                        end: "Berlin Hbf",
+                        requiredTarif: "DB"
+                    },
+                    {
+                        start: "Berlin Hbf",
+                        end: "MÃ¼nchen Hbf",
+                        requiredTarif: "DB"
+                    }
+                ]
+            };
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'95b7c23b1594d23a',t:'MTc1MTg5NTY3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>
