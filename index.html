@@ -67,7 +67,7 @@
             transition: all 0.3s ease;
         }
         
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);
         }
@@ -77,9 +77,14 @@
             transition: all 0.3s ease;
         }
         
-        .btn-danger:hover {
+        .btn-danger:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 10px 15px -3px rgba(185, 28, 28, 0.4);
+        }
+        
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
         .progress-bar {
@@ -551,6 +556,15 @@
                 <p id="error-modal-message">Diese Fahrkarte ist ungültig.</p>
             </div>
             
+            <div id="error-reasons-container" class="my-4 hidden">
+                <div class="invalid-reason">
+                    <h4 class="font-medium mb-2">Gründe für die Ungültigkeit:</h4>
+                    <div id="error-reasons-list">
+                        <!-- Reasons will be inserted here dynamically -->
+                    </div>
+                </div>
+            </div>
+            
             <div class="text-right">
                 <button id="error-modal-ok" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition">
                     OK
@@ -580,7 +594,8 @@
             isPassengerAggressive: false,
             currentTime: new Date(),
             simulationStartTime: new Date(),
-            invalidReasons: []
+            invalidReasons: [],
+            buttonsEnabled: true
         };
         
         // Names for random generation
@@ -626,6 +641,8 @@
         const errorModalMessage = document.getElementById('error-modal-message');
         const closeErrorModal = document.getElementById('close-error-modal');
         const errorModalOk = document.getElementById('error-modal-ok');
+        const errorReasonsContainer = document.getElementById('error-reasons-container');
+        const errorReasonsList = document.getElementById('error-reasons-list');
         
         // Initialize setup
         document.addEventListener('DOMContentLoaded', function() {
@@ -858,14 +875,44 @@
             generateNewPassenger();
             
             // Event listeners
-            validBtn.addEventListener('click', () => handleDecision(true));
-            invalidBtn.addEventListener('click', () => handleDecision(false));
+            validBtn.addEventListener('click', () => {
+                if (gameState.buttonsEnabled) {
+                    disableButtons();
+                    handleDecision(true);
+                }
+            });
+            
+            invalidBtn.addEventListener('click', () => {
+                if (gameState.buttonsEnabled) {
+                    disableButtons();
+                    handleDecision(false);
+                }
+            });
+            
             closeInvalidModal.addEventListener('click', closeModal);
             writeUpBtn.addEventListener('click', () => handleInvalidAction('writeUp'));
             callPoliceBtn.addEventListener('click', () => handleInvalidAction('police'));
             closeNoTicketModal.addEventListener('click', closeNoTicketModalHandler);
             noTicketWriteUpBtn.addEventListener('click', () => handleNoTicketAction('writeUp'));
             noTicketPoliceBtn.addEventListener('click', () => handleNoTicketAction('police'));
+        }
+        
+        // Disable buttons to prevent spamming
+        function disableButtons() {
+            gameState.buttonsEnabled = false;
+            validBtn.disabled = true;
+            validBtn.classList.add('btn-disabled');
+            invalidBtn.disabled = true;
+            invalidBtn.classList.add('btn-disabled');
+        }
+        
+        // Enable buttons
+        function enableButtons() {
+            gameState.buttonsEnabled = true;
+            validBtn.disabled = false;
+            validBtn.classList.remove('btn-disabled');
+            invalidBtn.disabled = false;
+            invalidBtn.classList.remove('btn-disabled');
         }
         
         // Update date and time display
@@ -885,6 +932,9 @@
         
         // Generate a new passenger with ticket
         function generateNewPassenger() {
+            // Enable buttons for the new passenger
+            enableButtons();
+            
             // Reset invalid reasons
             gameState.invalidReasons = [];
             
@@ -1397,7 +1447,7 @@
                     // User made the wrong decision
                     if (userDecision) {
                         // User incorrectly marked an invalid ticket as valid
-                        showErrorModal("Ungültige Fahrkarte", "Diese Fahrkarte ist nicht gültig!");
+                        showErrorModalWithReasons("Ungültige Fahrkarte", "Diese Fahrkarte ist nicht gültig!");
                         updateScore(false);
                     } else {
                         // User incorrectly marked a valid ticket as invalid
@@ -1414,9 +1464,9 @@
         }
         
         // Update invalid reasons list in the modal
-        function updateInvalidReasonsList() {
+        function updateInvalidReasonsList(container) {
             // Clear previous reasons
-            invalidReasonsList.innerHTML = '';
+            container.innerHTML = '';
             
             // Add each reason as a list item
             gameState.invalidReasons.forEach(reason => {
@@ -1428,7 +1478,7 @@
                     </svg>
                     <span>${reason}</span>
                 `;
-                invalidReasonsList.appendChild(reasonItem);
+                container.appendChild(reasonItem);
             });
             
             // If no reasons are available, add a generic one
@@ -1441,7 +1491,7 @@
                     </svg>
                     <span>Fahrkarte entspricht nicht den Anforderungen</span>
                 `;
-                invalidReasonsList.appendChild(reasonItem);
+                container.appendChild(reasonItem);
             }
         }
         
@@ -1488,13 +1538,26 @@
         // Show invalid ticket modal
         function showInvalidModal() {
             // Update the invalid reasons list
-            updateInvalidReasonsList();
+            updateInvalidReasonsList(invalidReasonsList);
             
             invalidModal.classList.remove('hidden');
             setTimeout(() => {
                 invalidModal.querySelector('.modal-content').style.opacity = '1';
                 invalidModal.querySelector('.modal-content').style.transform = 'scale(1)';
             }, 10);
+        }
+        
+        // Close modal
+        function closeModal() {
+            const modalContent = invalidModal.querySelector('.modal-content');
+            modalContent.style.opacity = '0';
+            modalContent.style.transform = 'scale(0.9)';
+            
+            setTimeout(() => {
+                invalidModal.classList.add('hidden');
+                // Generate new passenger
+                setTimeout(generateNewPassenger, 500);
+            }, 300);
         }
         
         // Close modal
