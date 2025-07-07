@@ -1,0 +1,1574 @@
+
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fahrkartenkontrolleur Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Fira Sans', sans-serif;
+            background-color: #d3d6e7;
+            color: #33387c;
+        }
+        
+        .ticket {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .ticket:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 100%;
+        }
+        
+        .ticket:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .ticket-hvv:before { background: linear-gradient(to bottom, #e3000f, #b30000); }
+        .ticket-bvg:before { background: linear-gradient(to bottom, #ffcc00, #f7a600); }
+        .ticket-mvv:before { background: linear-gradient(to bottom, #0066b3, #004d99); }
+        .ticket-vbb:before { background: linear-gradient(to bottom, #f0047f, #cc0066); }
+        .ticket-vgn:before { background: linear-gradient(to bottom, #009900, #006600); }
+        .ticket-rmv:before { background: linear-gradient(to bottom, #c2d500, #a3b300); }
+        .ticket-vrr:before { background: linear-gradient(to bottom, #009ee3, #0088cc); }
+        .ticket-vrs:before { background: linear-gradient(to bottom, #ed1c24, #cc0000); }
+        .ticket-nahsh:before { background: linear-gradient(to bottom, #0075bf, #005c99); }
+        .ticket-vmv:before { background: linear-gradient(to bottom, #e30613, #b30000); }
+        .ticket-metronom:before { background: linear-gradient(to bottom, #00aeef, #0099cc); }
+        .ticket-mdv:before { background: linear-gradient(to bottom, #8dc63f, #7ab800); }
+        .ticket-vvo:before { background: linear-gradient(to bottom, #e2001a, #b30000); }
+        .ticket-saarvv:before { background: linear-gradient(to bottom, #e2001a, #b30000); }
+        .ticket-vmt:before { background: linear-gradient(to bottom, #009640, #007a33); }
+        .ticket-default:before { background: linear-gradient(to bottom, #3b82f6, #1d4ed8); }
+        
+        .passenger-profile {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(185, 28, 28, 0.4);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #033b59, #055a88);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .modal {
+            background-color: rgba(0, 0, 0, 0.5);
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .modal.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .result-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            padding: 20px 40px;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            z-index: 100;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .result-animation.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        
+        .avatar {
+            background: linear-gradient(135deg, #033b59 0%, #055a88 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .info-card {
+            background: linear-gradient(135deg, #f0f2fa 0%, #e1e4f5 100%);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid #033b59;
+        }
+        
+        .train-selector {
+            background: linear-gradient(135deg, #f0f2fa 0%, #e1e4f5 100%);
+            border-radius: 8px;
+            border: 1px solid #bac1e4;
+            transition: all 0.3s ease;
+        }
+        
+        .train-selector:hover {
+            background: linear-gradient(135deg, #e1e4f5 0%, #d3d6e7 100%);
+            transform: translateY(-2px);
+        }
+        
+        .train-selector.selected {
+            background: linear-gradient(135deg, #033b59 0%, #055a88 100%);
+            border-color: #033b59;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(3, 59, 89, 0.1), 0 2px 4px -1px rgba(3, 59, 89, 0.06);
+        }
+        
+        .setup-screen {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .setup-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(3, 59, 89, 0.1), 0 8px 10px -6px rgba(3, 59, 89, 0.05);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .setup-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #033b59, #055a88);
+        }
+        
+        .setup-header {
+            background: linear-gradient(135deg, #033b59 0%, #055a88 100%);
+            padding: 2rem;
+            color: white;
+            text-align: center;
+        }
+        
+        .setup-body {
+            padding: 2rem;
+        }
+        
+        .start-button {
+            background: linear-gradient(135deg, #033b59 0%, #055a88 100%);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .start-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(3, 59, 89, 0.4);
+        }
+        
+        .start-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(3, 59, 89, 0.1), 0 8px 10px -6px rgba(3, 59, 89, 0.05);
+        }
+        
+        .invalid-reason {
+            background-color: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 4px;
+        }
+        
+        .invalid-reason-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .invalid-reason-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .invalid-reason-icon {
+            color: #ef4444;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #033b59;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner mb-4"></div>
+        <p class="text-lg font-medium">Daten werden geladen...</p>
+    </div>
+    
+    <!-- Setup Screen -->
+    <div id="setup-screen" class="container mx-auto px-4 py-8 setup-screen">
+        <div class="max-w-4xl mx-auto">
+            <div class="setup-card">
+                <div class="setup-header">
+                    <h1 class="text-3xl font-bold mb-2">Fahrkartenkontrolleur Simulator</h1>
+                    <p class="text-white opacity-90">Wähle eine Zugverbindung und starte das Spiel</p>
+                </div>
+                
+                <div class="setup-body">
+                    <div class="mb-8">
+                        <h2 class="text-xl font-semibold mb-4 text-gray-800">Zugverbindung wählen</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                            <button class="train-selector p-3 text-center" data-train="RB31">
+                                <div class="font-bold">RB31</div>
+                            </button>
+                            <button class="train-selector p-3 text-center" data-train="RE2">
+                                <div class="font-bold">RE2</div>
+                            </button>
+                            <button class="train-selector p-3 text-center" data-train="RE3">
+                                <div class="font-bold">RE3</div>
+                            </button>
+                            <button class="train-selector p-3 text-center" data-train="RB41">
+                                <div class="font-bold">RB41</div>
+                            </button>
+                            <button class="train-selector p-3 text-center" data-train="RE30">
+                                <div class="font-bold">RE30</div>
+                            </button>
+                            <button class="train-selector p-3 text-center" data-train="RE50">
+                                <div class="font-bold">RE50</div>
+                            </button>
+                            <button class="train-selector p-3 text-center" data-train="RE10">
+                                <div class="font-bold">RE10</div>
+                            </button>
+                            <button class="train-selector p-3 text-center" data-train="RB4243">
+                                <div class="font-bold">RB42/43</div>
+                            </button>
+                            <button class="train-selector p-3 text-center" data-train="RB32">
+                                <div class="font-bold">RB32</div>
+                            </button>
+                            <button class="train-selector p-3 text-center" data-train="RB47">
+                                <div class="font-bold">RB47</div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="selected-train-info" class="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200 hidden">
+                        <h3 class="font-medium text-blue-800">Ausgewählte Zugverbindung: <span id="selected-train-name">-</span></h3>
+                        <p class="text-sm text-blue-600 mt-1">Klicke auf "Spiel starten", um zu beginnen.</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button id="startGameBtn" class="start-button disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Spiel starten
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Game Screen -->
+    <div id="game-screen" class="container mx-auto px-4 py-8 hidden">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold mb-2">Fahrkartenkontrolleur Simulator</h1>
+                <p class="opacity-80">Überprüfe Fahrkarten und triff die richtigen Entscheidungen</p>
+                <p id="current-train" class="text-sm font-medium mt-1">Zugverbindung: RB31</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex items-center space-x-4">
+                <div class="text-center">
+                    <p class="text-sm opacity-80">Level</p>
+                    <p id="level" class="text-xl font-bold">1</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-sm opacity-80">Punkte</p>
+                    <p id="score" class="text-xl font-bold">0</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex justify-between mb-2">
+                <span class="text-sm opacity-80">Fortschritt</span>
+                <span id="progress-text" class="text-sm font-medium">0/10</span>
+            </div>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <!-- Main Game Area -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Tarif Information Column -->
+            <div class="game-container p-6">
+                <h2 class="text-xl font-semibold mb-4">Tarifinfos</h2>
+                <div id="tarif-info" class="space-y-4">
+                    <div class="info-card">
+                        <h3 class="font-medium">Gültigkeitsregeln:</h3>
+                        <ul class="list-disc pl-5 text-sm mt-1">
+                            <li><strong>Uhr:</strong> Gültig ab dem angegebenen Zeitpunkt</li>
+                            <li><strong>f.T.:</strong> Gültig bis Ende des Folgetages</li>
+                            <li><strong>f.M.:</strong> Gültig bis Ende des nächsten Monats</li>
+                            <li><strong>f.W.:</strong> Gültig für 7 Tage ab Kauf</li>
+                            <li><strong>X Minuten/Stunden/Tage:</strong> Gültig für den angegebenen Zeitraum ab Kauf</li>
+                            <li><strong>von X bis Y:</strong> Nur in diesem Zeitfenster gültig</li>
+                        </ul>
+                    </div>
+                    <div class="info-card">
+                        <h3 class="font-medium">Personenbezogene Regeln:</h3>
+                        <ul class="list-disc pl-5 text-sm mt-1">
+                            <li>Bei <strong>nicht übertragbaren</strong> Karten muss der Name übereinstimmen</li>
+                            <li>Beachte Altersbeschränkungen (ab X, bis X, zwischen X und Y)</li>
+                            <li>Prüfe die Anzahl der mitreisenden Personen</li>
+                        </ul>
+                    </div>
+                    <div class="info-card">
+                        <h3 class="font-medium">Aktuelle Zeit:</h3>
+                        <p id="current-time" class="text-lg font-bold mt-1">14:30 Uhr</p>
+                        <p id="current-date" class="text-sm">15. Mai 2023</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Passenger and Ticket Column -->
+            <div class="game-container p-6">
+                <h2 class="text-xl font-semibold mb-4">Fahrgast & Fahrkarte</h2>
+                
+                <div id="passenger-container" class="passenger-profile p-4 mb-6">
+                    <div class="flex items-center mb-4">
+                        <div class="avatar w-16 h-16 mr-4">
+                            <span id="passenger-initial">M</span>
+                        </div>
+                        <div>
+                            <h3 id="passenger-name" class="font-semibold text-lg">Max Mustermann</h3>
+                            <p id="passenger-age" class="opacity-80">34 Jahre</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                            <span class="opacity-80">Mitreisende:</span>
+                            <span id="passenger-companions" class="font-medium">1 Erwachsener</span>
+                        </div>
+                        <div>
+                            <span class="opacity-80">Ausweis-ID:</span>
+                            <span id="passenger-id" class="font-medium">DE123456789</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="ticket-container" class="ticket ticket-hvv p-4 pl-6 relative">
+                    <div class="mb-4">
+                        <h3 id="ticket-name" class="font-bold text-lg">Einzelfahrt Zone A</h3>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <p class="text-xs opacity-80">Tarifname</p>
+                            <p id="ticket-tarif" class="font-semibold">HVV</p>
+                        </div>
+                        <div>
+                            <p class="text-xs opacity-80">Inhaber</p>
+                            <p id="ticket-owner" class="font-semibold">Max Mustermann</p>
+                        </div>
+                        <div>
+                            <p class="text-xs opacity-80">Kaufdatum</p>
+                            <p id="ticket-purchase-date" class="font-semibold">15.05.2023, 14:00 Uhr</p>
+                        </div>
+                        <div>
+                            <p class="text-xs opacity-80">Strecke</p>
+                            <p id="ticket-route" class="font-semibold">Hamburg Hbf → Lübeck Hbf</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Actions Column -->
+            <div class="game-container p-6">
+                <h2 class="text-xl font-semibold mb-4">Kontrolle</h2>
+                <p class="opacity-80 mb-6">Überprüfe die Fahrkarte und entscheide, ob sie gültig ist.</p>
+                
+                <div class="space-y-4">
+                    <button id="valid-btn" class="btn-primary w-full py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        Fahrkarte gültig
+                    </button>
+                    
+                    <button id="invalid-btn" class="btn-danger w-full py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Fahrkarte ungültig
+                    </button>
+                </div>
+                
+                <div class="mt-8">
+                    <h3 class="font-medium mb-2">Statistik</h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div class="bg-green-50 p-3 rounded-lg">
+                            <p class="text-green-800">Richtige Entscheidungen</p>
+                            <p id="correct-decisions" class="text-xl font-bold text-green-600">0</p>
+                        </div>
+                        <div class="bg-red-50 p-3 rounded-lg">
+                            <p class="text-red-800">Falsche Entscheidungen</p>
+                            <p id="wrong-decisions" class="text-xl font-bold text-red-600">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Invalid Ticket Modal -->
+    <div id="invalid-modal" class="modal fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div class="modal-overlay absolute inset-0 bg-black opacity-50"></div>
+        <div class="modal-content bg-white w-11/12 md:max-w-md mx-auto rounded-lg shadow-lg z-50 overflow-y-auto p-6">
+            <div class="flex justify-between items-center pb-3">
+                <h3 class="text-xl font-bold">Ungültige Fahrkarte</h3>
+                <button id="close-invalid-modal" class="modal-close text-gray-500 hover:text-gray-700">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="invalid-reasons-container" class="my-4">
+                <div class="invalid-reason mb-4">
+                    <h4 class="font-medium mb-2">Gründe für die Ungültigkeit:</h4>
+                    <div id="invalid-reasons-list">
+                        <!-- Reasons will be inserted here dynamically -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <p>Wie möchtest du vorgehen?</p>
+            </div>
+            
+            <div class="flex flex-col space-y-3">
+                <button id="write-up-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded transition">
+                    Aufschreiben (Bußgeld)
+                </button>
+                <button id="call-police-btn" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition">
+                    Polizei rufen
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- No Ticket Modal -->
+    <div id="no-ticket-modal" class="modal fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div class="modal-overlay absolute inset-0 bg-black opacity-50"></div>
+        <div class="modal-content bg-white w-11/12 md:max-w-md mx-auto rounded-lg shadow-lg z-50 overflow-y-auto p-6">
+            <div class="flex justify-between items-center pb-3">
+                <h3 class="text-xl font-bold">Fahrgast ohne Ticket</h3>
+                <button id="close-no-ticket-modal" class="modal-close text-gray-500 hover:text-gray-700">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="passenger-reaction" class="my-4 p-4 bg-gray-100 rounded-lg">
+                <p>Der Fahrgast reagiert aggressiv und verweigert die Angabe seiner Personalien.</p>
+            </div>
+            <div class="flex flex-col space-y-3">
+                <button id="no-ticket-write-up-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded transition">
+                    Aufschreiben versuchen
+                </button>
+                <button id="no-ticket-police-btn" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition">
+                    Polizei rufen
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Result Animation -->
+    <div id="result-animation" class="result-animation">Richtig!</div>
+    
+    <script>
+        // Game state
+        let gameState = {
+            score: 0,
+            level: 1,
+            correctDecisions: 0,
+            wrongDecisions: 0,
+            progress: 0,
+            ticketsChecked: 0,
+            ticketsPerLevel: 10,
+            currentPassenger: null,
+            currentTicket: null,
+            currentConnection: null,
+            ticketsData: null,
+            connectionsData: null,
+            selectedTrain: null,
+            isTicketValid: false,
+            hasNoTicket: false,
+            isPassengerAggressive: false,
+            currentTime: new Date(),
+            simulationStartTime: new Date(),
+            invalidReasons: []
+        };
+        
+        // DOM Elements
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const setupScreen = document.getElementById('setup-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const trainSelectors = document.querySelectorAll('.train-selector');
+        const selectedTrainInfo = document.getElementById('selected-train-info');
+        const selectedTrainName = document.getElementById('selected-train-name');
+        const startGameBtn = document.getElementById('startGameBtn');
+        const currentTrainElement = document.getElementById('current-train');
+        const scoreElement = document.getElementById('score');
+        const levelElement = document.getElementById('level');
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+        const correctDecisionsElement = document.getElementById('correct-decisions');
+        const wrongDecisionsElement = document.getElementById('wrong-decisions');
+        const currentTimeElement = document.getElementById('current-time');
+        const currentDateElement = document.getElementById('current-date');
+        const validBtn = document.getElementById('valid-btn');
+        const invalidBtn = document.getElementById('invalid-btn');
+        const invalidModal = document.getElementById('invalid-modal');
+        const closeInvalidModal = document.getElementById('close-invalid-modal');
+        const writeUpBtn = document.getElementById('write-up-btn');
+        const callPoliceBtn = document.getElementById('call-police-btn');
+        const noTicketModal = document.getElementById('no-ticket-modal');
+        const closeNoTicketModal = document.getElementById('close-no-ticket-modal');
+        const noTicketWriteUpBtn = document.getElementById('no-ticket-write-up-btn');
+        const noTicketPoliceBtn = document.getElementById('no-ticket-police-btn');
+        const passengerReaction = document.getElementById('passenger-reaction');
+        const resultAnimation = document.getElementById('result-animation');
+        const ticketContainer = document.getElementById('ticket-container');
+        const invalidReasonsList = document.getElementById('invalid-reasons-list');
+        
+        // Names for random generation
+        const firstNames = ["Max", "Anna", "Leon", "Sophie", "Tim", "Lena", "Paul", "Julia", "Felix", "Laura", "Jonas", "Emma", "David", "Sarah", "Lukas", "Lisa", "Finn", "Marie", "Jan", "Lea"];
+        const lastNames = ["Müller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Schulz", "Hoffmann", "Schäfer", "Koch", "Bauer", "Richter", "Klein", "Wolf", "Schröder", "Neumann", "Schwarz", "Zimmermann"];
+        
+        // Initialize setup
+        function initSetup() {
+            // Load Excel files
+            Promise.all([
+                loadExcelFile('fahrkarten.xlsx', processTicketsData),
+                loadExcelFile('zugverbindungen.xlsx', processConnectionsData)
+            ])
+            .then(([ticketsData, connectionsData]) => {
+                gameState.ticketsData = ticketsData;
+                gameState.connectionsData = connectionsData;
+                
+                // Hide loading overlay
+                loadingOverlay.style.display = 'none';
+                
+                // Event listeners for train selection
+                trainSelectors.forEach(selector => {
+                    selector.addEventListener('click', () => {
+                        // Remove selected class from all selectors
+                        trainSelectors.forEach(s => s.classList.remove('selected'));
+                        
+                        // Add selected class to clicked selector
+                        selector.classList.add('selected');
+                        
+                        // Update selected train
+                        gameState.selectedTrain = selector.dataset.train;
+                        selectedTrainName.textContent = gameState.selectedTrain;
+                        selectedTrainInfo.classList.remove('hidden');
+                        
+                        // Check if we can enable the start button
+                        checkStartButtonState();
+                    });
+                });
+                
+                // Start game button
+                startGameBtn.addEventListener('click', startGame);
+            })
+            .catch(error => {
+                console.error("Error loading data:", error);
+                loadingOverlay.innerHTML = `
+                    <div class="text-red-600 text-center p-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <h2 class="text-xl font-bold mb-2">Fehler beim Laden der Daten</h2>
+                        <p>Bitte stelle sicher, dass die Dateien "fahrkarten.xlsx" und "zugverbindungen.xlsx" im gleichen Ordner wie diese HTML-Datei liegen.</p>
+                    </div>
+                `;
+            });
+        }
+        
+        // Load Excel file
+        function loadExcelFile(filename, processFunction) {
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', filename, true);
+                xhr.responseType = 'arraybuffer';
+                
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        try {
+                            const data = new Uint8Array(xhr.response);
+                            const workbook = XLSX.read(data, { type: 'array' });
+                            const processedData = processFunction(workbook);
+                            resolve(processedData);
+                        } catch (error) {
+                            console.error("Error processing Excel file:", error);
+                            reject(error);
+                        }
+                    } else {
+                        reject(new Error(`Failed to load ${filename}: ${xhr.status}`));
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    reject(new Error(`Network error while loading ${filename}`));
+                };
+                
+                xhr.send();
+            });
+        }
+        
+        // Check if we can enable the start button
+        function checkStartButtonState() {
+            if (gameState.selectedTrain) {
+                startGameBtn.disabled = false;
+            } else {
+                startGameBtn.disabled = true;
+            }
+        }
+        
+        // Start the game
+        function startGame() {
+            // Check if we have valid data
+            if (gameState.ticketsData.length === 0) {
+                alert("Keine gültigen Fahrkartendaten gefunden. Bitte überprüfe die Excel-Datei.");
+                return;
+            }
+            
+            if (!gameState.connectionsData[gameState.selectedTrain] || 
+                gameState.connectionsData[gameState.selectedTrain].length === 0) {
+                alert(`Keine gültigen Verbindungsdaten für ${gameState.selectedTrain} gefunden. Bitte überprüfe die Excel-Datei.`);
+                return;
+            }
+            
+            // Hide setup screen and show game screen
+            setupScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            
+            // Update current train display
+            currentTrainElement.textContent = `Zugverbindung: ${gameState.selectedTrain}`;
+            
+            // Initialize the game
+            initGame();
+        }
+        
+        // Process tickets data from Excel
+        function processTicketsData(workbook) {
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: "A" });
+            
+            const processedData = [];
+            
+            for (let i = 1; i < jsonData.length; i++) { // Skip header row
+                const row = jsonData[i];
+                if (row.C && row.D) { // Ensure tarif and name exist
+                    processedData.push({
+                        tarif: row.C,
+                        name: row.D,
+                        validity: row.E || "1 Stunde", // Default validity
+                        personCount: row.G || "1",
+                        transferable: row.H || "nein",
+                        ageRestriction: row.I || "egal"
+                    });
+                }
+            }
+            
+            return processedData;
+        }
+        
+        // Process connections data from Excel
+        function processConnectionsData(workbook) {
+            const processedData = {};
+            
+            // Process each sheet (train line)
+            workbook.SheetNames.forEach(sheetName => {
+                const worksheet = workbook.Sheets[sheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: "A" });
+                
+                const connections = [];
+                
+                for (let i = 1; i < jsonData.length; i++) { // Skip header row
+                    const row = jsonData[i];
+                    if (row.A && row.B && row.C) { // Ensure start, end, and required tarif exist
+                        connections.push({
+                            start: row.A,
+                            end: row.B,
+                            requiredTarif: row.C
+                        });
+                    }
+                }
+                
+                if (connections.length > 0) {
+                    processedData[sheetName] = connections;
+                }
+            });
+            
+            return processedData;
+        }
+        
+        // Initialize game
+        function initGame() {
+            gameState.simulationStartTime = new Date();
+            gameState.currentTime = new Date(gameState.simulationStartTime);
+            
+            updateDateTime();
+            setInterval(() => {
+                // Advance simulation time by 5 minutes each real minute
+                gameState.currentTime = new Date(gameState.currentTime.getTime() + 5 * 60000);
+                updateDateTime();
+            }, 60000);
+            
+            generateNewPassenger();
+            
+            // Event listeners
+            validBtn.addEventListener('click', () => handleDecision(true));
+            invalidBtn.addEventListener('click', () => handleDecision(false));
+            closeInvalidModal.addEventListener('click', closeModal);
+            writeUpBtn.addEventListener('click', () => handleInvalidAction('writeUp'));
+            callPoliceBtn.addEventListener('click', () => handleInvalidAction('police'));
+            closeNoTicketModal.addEventListener('click', closeNoTicketModalHandler);
+            noTicketWriteUpBtn.addEventListener('click', () => handleNoTicketAction('writeUp'));
+            noTicketPoliceBtn.addEventListener('click', () => handleNoTicketAction('police'));
+        }
+        
+        // Update date and time display
+        function updateDateTime() {
+            const now = gameState.currentTime;
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const year = now.getFullYear();
+            
+            const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+            
+            currentTimeElement.textContent = `${hours}:${minutes} Uhr`;
+            currentDateElement.textContent = `${day}. ${monthNames[now.getMonth()]} ${year}`;
+        }
+        
+        // Generate a new passenger with ticket
+        function generateNewPassenger() {
+            // Reset invalid reasons
+            gameState.invalidReasons = [];
+            
+            // Determine if passenger has no ticket (5% chance)
+            gameState.hasNoTicket = Math.random() < 0.05;
+            
+            if (gameState.hasNoTicket) {
+                generatePassengerWithoutTicket();
+            } else {
+                generatePassengerWithTicket();
+            }
+        }
+        
+        // Generate passenger without ticket
+        function generatePassengerWithoutTicket() {
+            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+            const fullName = `${firstName} ${lastName}`;
+            const age = Math.floor(Math.random() * 60) + 16; // Age between 16 and 75
+            const initialLetter = firstName.charAt(0);
+            
+            // Determine if passenger is aggressive (50% chance)
+            gameState.isPassengerAggressive = Math.random() < 0.5;
+            
+            // Update passenger profile
+            document.getElementById('passenger-name').textContent = fullName;
+            document.getElementById('passenger-age').textContent = `${age} Jahre`;
+            document.getElementById('passenger-initial').textContent = initialLetter;
+            document.getElementById('passenger-companions').textContent = "Allein reisend";
+            document.getElementById('passenger-id').textContent = generateRandomID();
+            
+            // Hide ticket container
+            document.getElementById('ticket-container').style.display = 'none';
+            
+            gameState.currentPassenger = {
+                name: fullName,
+                age: age,
+                hasNoTicket: true,
+                isAggressive: gameState.isPassengerAggressive
+            };
+            
+            gameState.isTicketValid = false;
+            gameState.invalidReasons.push("Fahrgast hat keine Fahrkarte");
+        }
+        
+        // Generate passenger with ticket
+        function generatePassengerWithTicket() {
+            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+            const fullName = `${firstName} ${lastName}`;
+            const age = Math.floor(Math.random() * 60) + 16; // Age between 16 and 75
+            const initialLetter = firstName.charAt(0);
+            
+            // Get ticket data
+            const ticketData = gameState.ticketsData[Math.floor(Math.random() * gameState.ticketsData.length)];
+            
+            // Get connection data for the selected train
+            const trainConnections = gameState.connectionsData[gameState.selectedTrain];
+            const connectionData = trainConnections[Math.floor(Math.random() * trainConnections.length)];
+            
+            // Determine if ticket should be valid (70% chance)
+            const shouldBeValid = Math.random() < 0.7;
+            
+            // Create ticket with potential issues
+            const ticket = createTicket(ticketData, connectionData, fullName, age, shouldBeValid);
+            
+            // Update passenger profile
+            document.getElementById('passenger-name').textContent = fullName;
+            document.getElementById('passenger-age').textContent = `${age} Jahre`;
+            document.getElementById('passenger-initial').textContent = initialLetter;
+            
+            // Set companions based on ticket
+            const companions = parsePersonCount(ticket.personCount);
+            document.getElementById('passenger-companions').textContent = companions;
+            document.getElementById('passenger-id').textContent = generateRandomID();
+            
+            // Update ticket display
+            document.getElementById('ticket-container').style.display = 'block';
+            document.getElementById('ticket-name').textContent = ticket.name;
+            document.getElementById('ticket-tarif').textContent = ticket.tarif;
+            document.getElementById('ticket-owner').textContent = ticket.owner;
+            document.getElementById('ticket-purchase-date').textContent = `${formatDate(ticket.purchaseDate)}, ${formatTime(ticket.purchaseDate)}`;
+            document.getElementById('ticket-route').textContent = `${ticket.connection.start} → ${ticket.connection.end}`;
+            
+            // Update ticket style based on tarif
+            updateTicketStyle(ticket.tarif);
+            
+            // Store current passenger and ticket
+            gameState.currentPassenger = {
+                name: fullName,
+                age: age,
+                hasNoTicket: false
+            };
+            
+            gameState.currentTicket = ticket;
+            gameState.currentConnection = connectionData;
+            gameState.isTicketValid = ticket.isValid;
+            
+            // Store invalid reasons if ticket is not valid
+            if (!ticket.isValid) {
+                if (ticket.invalidReason) {
+                    gameState.invalidReasons.push(ticket.invalidReason);
+                }
+                
+                // Check for additional issues
+                if (ticket.owner !== fullName && ticket.transferable === "nein") {
+                    gameState.invalidReasons.push("Name stimmt nicht überein (nicht übertragbar)");
+                }
+                
+                if (ticket.tarif !== connectionData.requiredTarif) {
+                    gameState.invalidReasons.push(`Falscher Tarif für diese Strecke (benötigt: ${connectionData.requiredTarif})`);
+                }
+                
+                // If no specific reason was found, add a generic one
+                if (gameState.invalidReasons.length === 0) {
+                    gameState.invalidReasons.push("Fahrkarte entspricht nicht den Anforderungen");
+                }
+            }
+        }
+        
+        // Update ticket style based on tarif
+        function updateTicketStyle(tarif) {
+            // Remove all ticket-* classes
+            ticketContainer.className = ticketContainer.className.replace(/ticket-\w+/g, '');
+            
+            // Add base ticket class
+            ticketContainer.classList.add('ticket');
+            
+            // Add specific tarif class
+            const tarifLower = tarif.toLowerCase().replace(/\./g, '');
+            const tarifClass = `ticket-${tarifLower}`;
+            
+            // Check if we have a specific style for this tarif
+            const validTarifs = ['hvv', 'bvg', 'mvv', 'vbb', 'vgn', 'rmv', 'vrr', 'vrs', 'nahsh', 'vmv', 'metronom', 'mdv', 'vvo', 'saarvv', 'vmt'];
+            
+            if (validTarifs.includes(tarifLower)) {
+                ticketContainer.classList.add(tarifClass);
+            } else {
+                ticketContainer.classList.add('ticket-default');
+            }
+        }
+        
+        // Format date as DD.MM.YYYY
+        function formatDate(date) {
+            return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
+        }
+        
+        // Format time as HH:MM Uhr
+        function formatTime(date) {
+            return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')} Uhr`;
+        }
+        
+        // Create a ticket with potential issues
+        function createTicket(ticketData, connectionData, passengerName, passengerAge, shouldBeValid) {
+            const now = new Date(gameState.currentTime);
+            
+            // Create purchase date (between 7 days ago and now)
+            let purchaseDate = new Date(now);
+            
+            // For invalid tickets, we might set purchase date further in the past
+            if (!shouldBeValid && Math.random() < 0.6) {
+                // Set purchase date between 1 and 30 days ago
+                const daysAgo = Math.floor(Math.random() * 30) + 1;
+                purchaseDate.setDate(purchaseDate.getDate() - daysAgo);
+            } else {
+                // Set purchase date between 0 and 6 days ago
+                const hoursAgo = Math.floor(Math.random() * 144); // Up to 6 days (144 hours)
+                purchaseDate.setHours(purchaseDate.getHours() - hoursAgo);
+            }
+            
+            // Round minutes to 5-minute intervals for more realistic times
+            purchaseDate.setMinutes(Math.floor(purchaseDate.getMinutes() / 5) * 5);
+            
+            let isValid = shouldBeValid;
+            let invalidReason = "";
+            
+            // Process validity rule
+            const validityRule = ticketData.validity;
+            
+            // Check if ticket is valid based on purchase date and validity rule
+            let timeValid = isTicketTimeValid(purchaseDate, validityRule, now, passengerAge, ticketData.ageRestriction);
+            
+            // Check if tarif is valid for the connection
+            let tarifValid = ticketData.tarif === connectionData.requiredTarif;
+            
+            // If we want the ticket to be valid/invalid but it's not, adjust accordingly
+            if (shouldBeValid) {
+                if (!timeValid) {
+                    // Make time valid by adjusting purchase date
+                    purchaseDate = adjustPurchaseDateForValidity(validityRule, now, true);
+                    timeValid = true;
+                }
+                
+                if (!tarifValid && Math.random() < 0.5) {
+                    // Make tarif valid by using the required tarif (50% chance)
+                    ticketData = { ...ticketData, tarif: connectionData.requiredTarif };
+                    tarifValid = true;
+                }
+                
+                isValid = timeValid && tarifValid;
+            } else {
+                if (timeValid && tarifValid) {
+                    // Make invalid by either time or tarif
+                    if (Math.random() < 0.5) {
+                        // Make time invalid
+                        purchaseDate = adjustPurchaseDateForValidity(validityRule, now, false);
+                        timeValid = false;
+                        invalidReason = "Abgelaufene Gültigkeit";
+                    } else {
+                        // Make tarif invalid
+                        // Get all unique tarifs from connections data
+                        const allTarifs = new Set();
+                        Object.values(gameState.connectionsData).forEach(connections => {
+                            connections.forEach(conn => {
+                                allTarifs.add(conn.requiredTarif);
+                            });
+                        });
+                        
+                        // Convert Set to Array and filter out the required tarif
+                        const tarifArray = Array.from(allTarifs);
+                        const validTarifs = tarifArray.filter(t => t !== connectionData.requiredTarif);
+                        
+                        if (validTarifs.length > 0) {
+                            ticketData = { ...ticketData, tarif: validTarifs[Math.floor(Math.random() * validTarifs.length)] };
+                            tarifValid = false;
+                            invalidReason = "Falscher Tarif für diese Strecke";
+                        }
+                    }
+                    
+                    isValid = false;
+                }
+            }
+            
+            // Check transferability
+            let ticketOwner = passengerName;
+            if (ticketData.transferable === "nein" && !shouldBeValid) {
+                // 50% chance to make name different if ticket should be invalid
+                if (Math.random() < 0.5) {
+                    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                    ticketOwner = `${randomFirstName} ${randomLastName}`;
+                    isValid = false;
+                    invalidReason = "Name stimmt nicht überein";
+                }
+            }
+            
+            // Check age restrictions
+            if (isValid && ticketData.ageRestriction !== "egal") {
+                isValid = checkAgeRestriction(passengerAge, ticketData.ageRestriction);
+                if (!isValid) {
+                    invalidReason = "Altersgrenze nicht erfüllt";
+                }
+            }
+            
+            return {
+                tarif: ticketData.tarif,
+                name: ticketData.name,
+                owner: ticketOwner,
+                purchaseDate: purchaseDate,
+                validityRule: validityRule,
+                personCount: ticketData.personCount,
+                transferable: ticketData.transferable,
+                ageRestriction: ticketData.ageRestriction,
+                connection: connectionData,
+                isValid: isValid,
+                invalidReason: invalidReason
+            };
+        }
+        
+        // Check if ticket is valid based on purchase date and validity rule
+        function isTicketTimeValid(purchaseDate, validityRule, currentTime, passengerAge, ageRestriction) {
+            // Check age restriction first
+            if (ageRestriction !== "egal" && !checkAgeRestriction(passengerAge, ageRestriction)) {
+                return false;
+            }
+            
+            if (validityRule.includes("Uhr")) {
+                // Specific time validity
+                const timeMatch = validityRule.match(/(\d+):(\d+)/);
+                if (timeMatch) {
+                    const hours = parseInt(timeMatch[1]);
+                    const minutes = parseInt(timeMatch[2]);
+                    
+                    // Create a date object for the validity time on the same day
+                    const validityTime = new Date(currentTime);
+                    validityTime.setHours(hours, minutes, 0, 0);
+                    
+                    // If the validity time is earlier than current time on the same day,
+                    // the ticket is valid from that time
+                    return validityTime <= currentTime;
+                }
+            } else if (validityRule === "f.T.") {
+                // Valid until end of next day after purchase
+                const validUntil = new Date(purchaseDate);
+                validUntil.setDate(validUntil.getDate() + 1);
+                validUntil.setHours(23, 59, 59, 999);
+                return currentTime <= validUntil;
+            } else if (validityRule === "f.M.") {
+                // Valid until end of next month after purchase
+                const validUntil = new Date(purchaseDate);
+                validUntil.setMonth(validUntil.getMonth() + 1, 0); // Last day of next month
+                validUntil.setHours(23, 59, 59, 999);
+                return currentTime <= validUntil;
+            } else if (validityRule === "f.W.") {
+                // Valid for 7 days after purchase
+                const validUntil = new Date(purchaseDate);
+                validUntil.setDate(validUntil.getDate() + 7);
+                validUntil.setHours(23, 59, 59, 999);
+                return currentTime <= validUntil;
+            } else if (validityRule.includes("Minuten")) {
+                // Minutes validity
+                const minutesMatch = validityRule.match(/(\d+)/);
+                if (minutesMatch) {
+                    const minutes = parseInt(minutesMatch[1]);
+                    const validUntil = new Date(purchaseDate.getTime() + minutes * 60000);
+                    return currentTime <= validUntil;
+                }
+            } else if (validityRule.includes("Stunde")) {
+                // Hours validity
+                const hoursMatch = validityRule.match(/(\d+)/);
+                if (hoursMatch) {
+                    const hours = parseInt(hoursMatch[1]);
+                    const validUntil = new Date(purchaseDate.getTime() + hours * 3600000);
+                    return currentTime <= validUntil;
+                }
+            } else if (validityRule.includes("Tag")) {
+                // Days validity
+                const daysMatch = validityRule.match(/(\d+)/);
+                if (daysMatch) {
+                    const days = parseInt(daysMatch[1]);
+                    const validUntil = new Date(purchaseDate);
+                    validUntil.setDate(validUntil.getDate() + days);
+                    validUntil.setHours(23, 59, 59, 999);
+                    return currentTime <= validUntil;
+                }
+            } else if (validityRule.includes("von") && validityRule.includes("bis")) {
+                // Time window validity (e.g., "von 9 bis 18")
+                const timeWindowMatch = validityRule.match(/von (\d+) bis (\d+)/);
+                if (timeWindowMatch) {
+                    const startHour = parseInt(timeWindowMatch[1]);
+                    const endHour = parseInt(timeWindowMatch[2]);
+                    
+                    const currentHour = currentTime.getHours();
+                    return currentHour >= startHour && currentHour < endHour;
+                }
+            }
+            
+            // Default: assume 1 hour validity if no rule matches
+            const validUntil = new Date(purchaseDate.getTime() + 3600000);
+            return currentTime <= validUntil;
+        }
+        
+        // Check age restriction
+        function checkAgeRestriction(age, restriction) {
+            if (restriction === "egal") {
+                return true;
+            } else if (restriction.startsWith("ab ")) {
+                const minAge = parseInt(restriction.substring(3));
+                return age >= minAge;
+            } else if (restriction.startsWith("bis ")) {
+                const maxAge = parseInt(restriction.substring(4));
+                return age <= maxAge;
+            } else if (restriction.startsWith("zwischen ")) {
+                const ageRange = restriction.substring(9).split(" und ");
+                const minAge = parseInt(ageRange[0]);
+                const maxAge = parseInt(ageRange[1]);
+                return age >= minAge && age <= maxAge;
+            }
+            return true;
+        }
+        
+        // Adjust purchase date to make ticket valid or invalid
+        function adjustPurchaseDateForValidity(validityRule, currentTime, makeValid) {
+            const adjustedDate = new Date(currentTime);
+            
+            if (validityRule.includes("Uhr")) {
+                // For specific time validity, we don't need to adjust purchase date
+                return adjustedDate;
+            } else if (validityRule === "f.T.") {
+                if (makeValid) {
+                    // Make valid: set purchase date to yesterday
+                    adjustedDate.setDate(adjustedDate.getDate() - 1);
+                } else {
+                    // Make invalid: set purchase date to 2 days ago
+                    adjustedDate.setDate(adjustedDate.getDate() - 2);
+                }
+            } else if (validityRule === "f.M.") {
+                if (makeValid) {
+                    // Make valid: set purchase date to current month
+                    // No change needed, as it's valid until end of next month
+                } else {
+                    // Make invalid: set purchase date to 2 months ago
+                    adjustedDate.setMonth(adjustedDate.getMonth() - 2);
+                }
+            } else if (validityRule === "f.W.") {
+                if (makeValid) {
+                    // Make valid: set purchase date to 3 days ago
+                    adjustedDate.setDate(adjustedDate.getDate() - 3);
+                } else {
+                    // Make invalid: set purchase date to 8 days ago
+                    adjustedDate.setDate(adjustedDate.getDate() - 8);
+                }
+            } else if (validityRule.includes("Minuten")) {
+                const minutesMatch = validityRule.match(/(\d+)/);
+                if (minutesMatch) {
+                    const minutes = parseInt(minutesMatch[1]);
+                    if (makeValid) {
+                        // Make valid: set purchase date to half the validity period ago
+                        adjustedDate.setMinutes(adjustedDate.getMinutes() - Math.floor(minutes / 2));
+                    } else {
+                        // Make invalid: set purchase date to more than the validity period ago
+                        adjustedDate.setMinutes(adjustedDate.getMinutes() - (minutes + 5));
+                    }
+                }
+            } else if (validityRule.includes("Stunde")) {
+                const hoursMatch = validityRule.match(/(\d+)/);
+                if (hoursMatch) {
+                    const hours = parseInt(hoursMatch[1]);
+                    if (makeValid) {
+                        // Make valid: set purchase date to half the validity period ago
+                        adjustedDate.setHours(adjustedDate.getHours() - Math.floor(hours / 2));
+                    } else {
+                        // Make invalid: set purchase date to more than the validity period ago
+                        adjustedDate.setHours(adjustedDate.getHours() - (hours + 1));
+                    }
+                }
+            } else if (validityRule.includes("Tag")) {
+                const daysMatch = validityRule.match(/(\d+)/);
+                if (daysMatch) {
+                    const days = parseInt(daysMatch[1]);
+                    if (makeValid) {
+                        // Make valid: set purchase date to half the validity period ago
+                        adjustedDate.setDate(adjustedDate.getDate() - Math.floor(days / 2));
+                    } else {
+                        // Make invalid: set purchase date to more than the validity period ago
+                        adjustedDate.setDate(adjustedDate.getDate() - (days + 1));
+                    }
+                }
+            } else if (validityRule.includes("von") && validityRule.includes("bis")) {
+                // For time window validity, adjust the current time instead
+                const timeWindowMatch = validityRule.match(/von (\d+) bis (\d+)/);
+                if (timeWindowMatch) {
+                    const startHour = parseInt(timeWindowMatch[1]);
+                    const endHour = parseInt(timeWindowMatch[2]);
+                    
+                    if (makeValid) {
+                        // Make valid: set current hour to middle of valid window
+                        const middleHour = Math.floor((startHour + endHour) / 2);
+                        adjustedDate.setHours(middleHour, 30, 0, 0);
+                    } else {
+                        // Make invalid: set current hour outside valid window
+                        if (startHour > 12) {
+                            // If start hour is after noon, set to early morning
+                            adjustedDate.setHours(startHour - 3, 0, 0, 0);
+                        } else {
+                            // Otherwise set to evening
+                            adjustedDate.setHours(endHour + 1, 0, 0, 0);
+                        }
+                    }
+                }
+            }
+            
+            return adjustedDate;
+        }
+        
+        // Handle ticket decision
+        function handleDecision(userDecision) {
+            if (gameState.hasNoTicket) {
+                // Passenger has no ticket
+                if (userDecision === false) {
+                    // User correctly identified that there's no valid ticket
+                    showNoTicketModal();
+                } else {
+                    // User incorrectly marked as valid
+                    showResultAnimation(false, "Falsch! Der Fahrgast hat keine Fahrkarte.");
+                    updateScore(false);
+                }
+            } else {
+                // Passenger has a ticket
+                const correctDecision = userDecision === gameState.isTicketValid;
+                
+                if (correctDecision) {
+                    // User made the correct decision
+                    showResultAnimation(true, userDecision ? "Richtig! Die Fahrkarte ist gültig." : "Richtig! Die Fahrkarte ist ungültig.");
+                    updateScore(true);
+                } else {
+                    // User made the wrong decision
+                    showResultAnimation(false, userDecision ? "Falsch! Die Fahrkarte ist ungültig." : "Falsch! Die Fahrkarte ist gültig.");
+                    updateScore(false);
+                }
+                
+                // If user marked as invalid, show the invalid modal
+                if (!userDecision && !correctDecision) {
+                    // Only show modal if user incorrectly marked a valid ticket as invalid
+                    showInvalidModal();
+                } else if (!userDecision && correctDecision) {
+                    // User correctly marked an invalid ticket as invalid
+                    showInvalidModal();
+                } else {
+                    // Generate new passenger after a delay
+                    setTimeout(generateNewPassenger, 1500);
+                }
+            }
+        }
+        
+        // Update invalid reasons list in the modal
+        function updateInvalidReasonsList() {
+            // Clear previous reasons
+            invalidReasonsList.innerHTML = '';
+            
+            // Add each reason as a list item
+            gameState.invalidReasons.forEach(reason => {
+                const reasonItem = document.createElement('div');
+                reasonItem.className = 'invalid-reason-item';
+                reasonItem.innerHTML = `
+                    <svg class="invalid-reason-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                    </svg>
+                    <span>${reason}</span>
+                `;
+                invalidReasonsList.appendChild(reasonItem);
+            });
+            
+            // If no reasons are available, add a generic one
+            if (gameState.invalidReasons.length === 0) {
+                const reasonItem = document.createElement('div');
+                reasonItem.className = 'invalid-reason-item';
+                reasonItem.innerHTML = `
+                    <svg class="invalid-reason-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                    </svg>
+                    <span>Fahrkarte entspricht nicht den Anforderungen</span>
+                `;
+                invalidReasonsList.appendChild(reasonItem);
+            }
+        }
+        
+        // Handle action for invalid ticket
+        function handleInvalidAction(action) {
+            closeModal();
+            
+            if (!gameState.isTicketValid) {
+                // Ticket is actually invalid
+                showResultAnimation(true, action === 'writeUp' ? "Richtig! Bußgeld ausgestellt." : "Richtig! Polizei gerufen.");
+            } else {
+                // Ticket is actually valid
+                showResultAnimation(false, action === 'writeUp' ? "Falsch! Die Fahrkarte war gültig." : "Falsch! Die Fahrkarte war gültig.");
+            }
+            
+            // Generate new passenger after a delay
+            setTimeout(generateNewPassenger, 1500);
+        }
+        
+        // Handle action for passenger with no ticket
+        function handleNoTicketAction(action) {
+            closeNoTicketModalHandler();
+            
+            if (gameState.isPassengerAggressive) {
+                // Aggressive passenger
+                if (action === 'police') {
+                    showResultAnimation(true, "Richtig! Bei aggressivem Verhalten ist die Polizei die richtige Wahl.");
+                    updateScore(true);
+                } else {
+                    showResultAnimation(false, "Falsch! Bei aggressivem Verhalten sollte die Polizei gerufen werden.");
+                    updateScore(false);
+                }
+            } else {
+                // Cooperative passenger
+                if (action === 'writeUp') {
+                    showResultAnimation(true, "Richtig! Bußgeld ausgestellt.");
+                    updateScore(true);
+                } else {
+                    showResultAnimation(false, "Falsch! Die Polizei zu rufen war nicht notwendig.");
+                    updateScore(false);
+                }
+            }
+            
+            // Generate new passenger after a delay
+            setTimeout(generateNewPassenger, 1500);
+        }
+        
+        // Show invalid ticket modal
+        function showInvalidModal() {
+            // Update the invalid reasons list
+            updateInvalidReasonsList();
+            
+            invalidModal.classList.remove('hidden');
+            setTimeout(() => {
+                invalidModal.querySelector('.modal-content').style.opacity = '1';
+                invalidModal.querySelector('.modal-content').style.transform = 'scale(1)';
+            }, 10);
+        }
+        
+        // Close modal
+        function closeModal() {
+            const modalContent = invalidModal.querySelector('.modal-content');
+            modalContent.style.opacity = '0';
+            modalContent.style.transform = 'scale(0.9)';
+            
+            setTimeout(() => {
+                invalidModal.classList.add('hidden');
+                // Generate new passenger
+                setTimeout(generateNewPassenger, 500);
+            }, 300);
+        }
+        
+        // Show no ticket modal
+        function showNoTicketModal() {
+            // Set passenger reaction based on aggressiveness
+            if (gameState.isPassengerAggressive) {
+                const reactions = [
+                    "Der Fahrgast wird aggressiv: \"Ich gebe Ihnen gar nichts! Lassen Sie mich in Ruhe!\"",
+                    "Der Fahrgast zieht eine Flasche Alkohol heraus und trinkt demonstrativ.",
+                    "Der Fahrgast schreit: \"Ich kenne meine Rechte! Sie können mir gar nichts!\"",
+                    "Der Fahrgast verweigert die Angabe seiner Personalien und wird laut.",
+                    "Der Fahrgast droht: \"Wenn Sie mich nicht in Ruhe lassen, werden Sie es bereuen!\""
+                ];
+                passengerReaction.innerHTML = `<p class="text-red-800 font-medium">${reactions[Math.floor(Math.random() * reactions.length)]}</p>`;
+            } else {
+                const reactions = [
+                    "Der Fahrgast entschuldigt sich: \"Es tut mir leid, ich habe vergessen, ein Ticket zu kaufen.\"",
+                    "Der Fahrgast zeigt Verständnis: \"Ich verstehe, dass ich ein Bußgeld zahlen muss.\"",
+                    "Der Fahrgast erklärt: \"Ich hatte es eilig und keine Zeit, ein Ticket zu kaufen.\"",
+                    "Der Fahrgast kooperiert: \"Hier ist mein Ausweis, ich zahle das Bußgeld.\"",
+                    "Der Fahrgast ist einsichtig: \"Das war mein Fehler, es wird nicht wieder vorkommen.\""
+                ];
+                passengerReaction.innerHTML = `<p class="text-gray-800">${reactions[Math.floor(Math.random() * reactions.length)]}</p>`;
+            }
+            
+            noTicketModal.classList.remove('hidden');
+            setTimeout(() => {
+                noTicketModal.querySelector('.modal-content').style.opacity = '1';
+                noTicketModal.querySelector('.modal-content').style.transform = 'scale(1)';
+            }, 10);
+        }
+        
+        // Close no ticket modal
+        function closeNoTicketModalHandler() {
+            const modalContent = noTicketModal.querySelector('.modal-content');
+            modalContent.style.opacity = '0';
+            modalContent.style.transform = 'scale(0.9)';
+            
+            setTimeout(() => {
+                noTicketModal.classList.add('hidden');
+            }, 300);
+        }
+        
+        // Show result animation
+        function showResultAnimation(isCorrect, message) {
+            resultAnimation.textContent = message;
+            resultAnimation.style.backgroundColor = isCorrect ? '#10b981' : '#ef4444';
+            resultAnimation.classList.add('show');
+            
+            setTimeout(() => {
+                resultAnimation.classList.remove('show');
+            }, 1500);
+        }
+        
+        // Update score and progress
+        function updateScore(isCorrect) {
+            if (isCorrect) {
+                gameState.score += 10;
+                gameState.correctDecisions++;
+            } else {
+                gameState.score = Math.max(0, gameState.score - 5);
+                gameState.wrongDecisions++;
+            }
+            
+            gameState.ticketsChecked++;
+            gameState.progress = (gameState.ticketsChecked % gameState.ticketsPerLevel) / gameState.ticketsPerLevel * 100;
+            
+            // Check for level up
+            if (gameState.ticketsChecked > 0 && gameState.ticketsChecked % gameState.ticketsPerLevel === 0) {
+                gameState.level++;
+                showResultAnimation(true, `Level ${gameState.level} erreicht!`);
+            }
+            
+            // Update UI
+            scoreElement.textContent = gameState.score;
+            levelElement.textContent = gameState.level;
+            progressFill.style.width = `${gameState.progress}%`;
+            progressText.textContent = `${gameState.ticketsChecked % gameState.ticketsPerLevel}/${gameState.ticketsPerLevel}`;
+            correctDecisionsElement.textContent = gameState.correctDecisions;
+            wrongDecisionsElement.textContent = gameState.wrongDecisions;
+        }
+        
+        // Helper function to parse person count
+        function parsePersonCount(personCount) {
+            if (personCount.includes("+")) {
+                const parts = personCount.split("+");
+                const adults = parseInt(parts[0]) || 1;
+                return `${adults} ${adults === 1 ? 'Erwachsener' : 'Erwachsene'} + Zusatzpersonen`;
+            } else {
+                const count = parseInt(personCount) || 1;
+                return count === 1 ? "Allein reisend" : `${count} ${count === 1 ? 'Erwachsener' : 'Erwachsene'}`;
+            }
+        }
+        
+        // Generate random ID
+        function generateRandomID() {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const numbers = "0123456789";
+            let id = "";
+            
+            // Format: XX123456789
+            id += letters.charAt(Math.floor(Math.random() * letters.length));
+            id += letters.charAt(Math.floor(Math.random() * letters.length));
+            
+            for (let i = 0; i < 9; i++) {
+                id += numbers.charAt(Math.floor(Math.random() * numbers.length));
+            }
+            
+            return id;
+        }
+        
+        // Initialize the setup when the page loads
+        window.addEventListener('DOMContentLoaded', initSetup);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'95b7465266848e9a',t:'MTc1MTg5MDYwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
