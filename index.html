@@ -115,26 +115,6 @@
             opacity: 1;
         }
         
-        .result-animation {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            padding: 20px 40px;
-            border-radius: 12px;
-            color: white;
-            font-weight: bold;
-            font-size: 24px;
-            z-index: 100;
-            opacity: 0;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .result-animation.show {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
-        
         .avatar {
             background: linear-gradient(135deg, #033b59 0%, #055a88 100%);
             border-radius: 50%;
@@ -292,55 +272,32 @@
     </style>
 </head>
 <body class="min-h-screen">
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" class="loading-overlay">
-        <div class="loading-spinner mb-4"></div>
-        <p class="text-lg font-medium">Daten werden geladen...</p>
-    </div>
-    
     <!-- Setup Screen -->
     <div id="setup-screen" class="container mx-auto px-4 py-8 setup-screen">
         <div class="max-w-4xl mx-auto">
             <div class="setup-card">
                 <div class="setup-header">
                     <h1 class="text-3xl font-bold mb-2">Fahrkartenkontrolleur Simulator</h1>
-                    <p class="text-white opacity-90">Wähle eine Zugverbindung und starte das Spiel</p>
+                    <p class="text-white opacity-90">Wähle eine Zugverbindung und starte das Training</p>
                 </div>
                 
                 <div class="setup-body">
-                    <div class="mb-8">
+                    <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+                        <h2 class="text-xl font-semibold mb-2 text-gray-800">Willkommen zum Fahrkartenkontrolleur Simulator!</h2>
+                        <p class="mb-4">In dieser Simulation lernst du, wie man Fahrkarten richtig kontrolliert. Wähle unten eine Zugverbindung aus, um zu beginnen.</p>
+                    </div>
+                    
+                    <div id="loading-section" class="mb-6 p-4 bg-blue-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div id="loading-spinner" class="loading-spinner mr-3"></div>
+                            <p id="loading-status">Daten werden geladen...</p>
+                        </div>
+                    </div>
+                    
+                    <div id="train-selection-container" class="mb-8 hidden">
                         <h2 class="text-xl font-semibold mb-4 text-gray-800">Zugverbindung wählen</h2>
-                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                            <button class="train-selector p-3 text-center" data-train="RB31">
-                                <div class="font-bold">RB31</div>
-                            </button>
-                            <button class="train-selector p-3 text-center" data-train="RE2">
-                                <div class="font-bold">RE2</div>
-                            </button>
-                            <button class="train-selector p-3 text-center" data-train="RE3">
-                                <div class="font-bold">RE3</div>
-                            </button>
-                            <button class="train-selector p-3 text-center" data-train="RB41">
-                                <div class="font-bold">RB41</div>
-                            </button>
-                            <button class="train-selector p-3 text-center" data-train="RE30">
-                                <div class="font-bold">RE30</div>
-                            </button>
-                            <button class="train-selector p-3 text-center" data-train="RE50">
-                                <div class="font-bold">RE50</div>
-                            </button>
-                            <button class="train-selector p-3 text-center" data-train="RE10">
-                                <div class="font-bold">RE10</div>
-                            </button>
-                            <button class="train-selector p-3 text-center" data-train="RB4243">
-                                <div class="font-bold">RB42/43</div>
-                            </button>
-                            <button class="train-selector p-3 text-center" data-train="RB32">
-                                <div class="font-bold">RB32</div>
-                            </button>
-                            <button class="train-selector p-3 text-center" data-train="RB47">
-                                <div class="font-bold">RB47</div>
-                            </button>
+                        <div id="train-selectors" class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                            <!-- Train selectors will be added dynamically -->
                         </div>
                     </div>
                     
@@ -357,6 +314,12 @@
                 </div>
             </div>
         </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-spinner mb-4"></div>
+        <p class="text-lg font-medium">Daten werden verarbeitet...</p>
     </div>
     
     <!-- Game Screen -->
@@ -438,15 +401,9 @@
                             <p id="passenger-age" class="opacity-80">34 Jahre</p>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-2 text-sm">
-                        <div>
-                            <span class="opacity-80">Mitreisende:</span>
-                            <span id="passenger-companions" class="font-medium">1 Erwachsener</span>
-                        </div>
-                        <div>
-                            <span class="opacity-80">Ausweis-ID:</span>
-                            <span id="passenger-id" class="font-medium">DE123456789</span>
-                        </div>
+                    <div>
+                        <span class="opacity-80">Mitreisende:</span>
+                        <span id="passenger-companions" class="font-medium">1 Erwachsener</span>
                     </div>
                 </div>
                 
@@ -577,8 +534,30 @@
         </div>
     </div>
     
-    <!-- Result Animation -->
-    <div id="result-animation" class="result-animation">Richtig!</div>
+    <!-- Error Modal -->
+    <div id="error-modal" class="modal fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div class="modal-overlay absolute inset-0 bg-black opacity-50"></div>
+        <div class="modal-content bg-white w-11/12 md:max-w-md mx-auto rounded-lg shadow-lg z-50 overflow-y-auto p-6">
+            <div class="flex justify-between items-center pb-3">
+                <h3 class="text-xl font-bold" id="error-modal-title">Fehler</h3>
+                <button id="close-error-modal" class="modal-close text-gray-500 hover:text-gray-700">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="my-4 p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
+                <p id="error-modal-message">Diese Fahrkarte ist ungültig.</p>
+            </div>
+            
+            <div class="text-right">
+                <button id="error-modal-ok" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
     
     <script>
         // Game state
@@ -604,11 +583,19 @@
             invalidReasons: []
         };
         
+        // Names for random generation
+        const firstNames = ["Max", "Anna", "Leon", "Sophie", "Tim", "Lena", "Paul", "Julia", "Felix", "Laura", "Jonas", "Emma", "David", "Sarah", "Lukas", "Lisa", "Finn", "Marie", "Jan", "Lea"];
+        const lastNames = ["Müller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Schulz", "Hoffmann", "Schäfer", "Koch", "Bauer", "Richter", "Klein", "Wolf", "Schröder", "Neumann", "Schwarz", "Zimmermann"];
+        
         // DOM Elements
-        const loadingOverlay = document.getElementById('loading-overlay');
         const setupScreen = document.getElementById('setup-screen');
         const gameScreen = document.getElementById('game-screen');
-        const trainSelectors = document.querySelectorAll('.train-selector');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const loadingStatus = document.getElementById('loading-status');
+        const loadingSection = document.getElementById('loading-section');
+        const trainSelectionContainer = document.getElementById('train-selection-container');
+        const trainSelectors = document.getElementById('train-selectors');
         const selectedTrainInfo = document.getElementById('selected-train-info');
         const selectedTrainName = document.getElementById('selected-train-name');
         const startGameBtn = document.getElementById('startGameBtn');
@@ -632,127 +619,148 @@
         const noTicketWriteUpBtn = document.getElementById('no-ticket-write-up-btn');
         const noTicketPoliceBtn = document.getElementById('no-ticket-police-btn');
         const passengerReaction = document.getElementById('passenger-reaction');
-        const resultAnimation = document.getElementById('result-animation');
         const ticketContainer = document.getElementById('ticket-container');
         const invalidReasonsList = document.getElementById('invalid-reasons-list');
+        const errorModal = document.getElementById('error-modal');
+        const errorModalTitle = document.getElementById('error-modal-title');
+        const errorModalMessage = document.getElementById('error-modal-message');
+        const closeErrorModal = document.getElementById('close-error-modal');
+        const errorModalOk = document.getElementById('error-modal-ok');
         
-        // Names for random generation
-        const firstNames = ["Max", "Anna", "Leon", "Sophie", "Tim", "Lena", "Paul", "Julia", "Felix", "Laura", "Jonas", "Emma", "David", "Sarah", "Lukas", "Lisa", "Finn", "Marie", "Jan", "Lea"];
-        const lastNames = ["Müller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Schulz", "Hoffmann", "Schäfer", "Koch", "Bauer", "Richter", "Klein", "Wolf", "Schröder", "Neumann", "Schwarz", "Zimmermann"];
+        // Initialize setup
+        document.addEventListener('DOMContentLoaded', function() {
+            initSetup();
+        });
         
         // Initialize setup
         function initSetup() {
-            // Load Excel files
-            Promise.all([
-                loadExcelFile('fahrkarten.xlsx', processTicketsData),
-                loadExcelFile('zugverbindungen.xlsx', processConnectionsData)
-            ])
-            .then(([ticketsData, connectionsData]) => {
-                gameState.ticketsData = ticketsData;
-                gameState.connectionsData = connectionsData;
-                
-                // Hide loading overlay
-                loadingOverlay.style.display = 'none';
-                
-                // Event listeners for train selection
-                trainSelectors.forEach(selector => {
-                    selector.addEventListener('click', () => {
-                        // Remove selected class from all selectors
-                        trainSelectors.forEach(s => s.classList.remove('selected'));
-                        
-                        // Add selected class to clicked selector
-                        selector.classList.add('selected');
-                        
-                        // Update selected train
-                        gameState.selectedTrain = selector.dataset.train;
-                        selectedTrainName.textContent = gameState.selectedTrain;
-                        selectedTrainInfo.classList.remove('hidden');
-                        
-                        // Check if we can enable the start button
-                        checkStartButtonState();
-                    });
-                });
-                
-                // Start game button
-                startGameBtn.addEventListener('click', startGame);
-            })
-            .catch(error => {
-                console.error("Error loading data:", error);
-                loadingOverlay.innerHTML = `
-                    <div class="text-red-600 text-center p-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                        <h2 class="text-xl font-bold mb-2">Fehler beim Laden der Daten</h2>
-                        <p>Bitte stelle sicher, dass die Dateien "fahrkarten.xlsx" und "zugverbindungen.xlsx" im gleichen Ordner wie diese HTML-Datei liegen.</p>
-                    </div>
-                `;
-            });
+            // Load data files
+            loadDataFiles();
+            
+            // Start game button
+            startGameBtn.addEventListener('click', startGame);
+            
+            // Error modal close button
+            closeErrorModal.addEventListener('click', closeErrorModalHandler);
+            errorModalOk.addEventListener('click', closeErrorModalHandler);
         }
         
-        // Load Excel file
-        function loadExcelFile(filename, processFunction) {
-            return new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', filename, true);
-                xhr.responseType = 'arraybuffer';
+        // Load data files
+        async function loadDataFiles() {
+            try {
+                // Try to fetch the tickets file
+                const ticketsResponse = await fetch('fahrkarten.xlsx');
+                if (!ticketsResponse.ok) throw new Error('Fahrkarten.xlsx nicht gefunden');
+                const ticketsBlob = await ticketsResponse.blob();
                 
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        try {
-                            const data = new Uint8Array(xhr.response);
-                            const workbook = XLSX.read(data, { type: 'array' });
-                            const processedData = processFunction(workbook);
-                            resolve(processedData);
-                        } catch (error) {
-                            console.error("Error processing Excel file:", error);
-                            reject(error);
-                        }
-                    } else {
-                        reject(new Error(`Failed to load ${filename}: ${xhr.status}`));
+                // Try to fetch the connections file
+                const connectionsResponse = await fetch('zugverbindungen.xlsx');
+                if (!connectionsResponse.ok) throw new Error('Zugverbindungen.xlsx nicht gefunden');
+                const connectionsBlob = await connectionsResponse.blob();
+                
+                // Process the files
+                await processTicketsFile(ticketsBlob);
+                await processConnectionsFile(connectionsBlob);
+                
+                // Update UI
+                loadingStatus.textContent = "Daten erfolgreich geladen!";
+                loadingStatus.classList.add('text-green-600');
+                loadingSpinner.style.borderLeftColor = '#10b981';
+                
+                // Show train selection
+                showTrainSelectors();
+                
+            } catch (error) {
+                console.error("Data loading failed:", error);
+                loadingStatus.textContent = "Fehler beim Laden der Daten: " + error.message;
+                loadingStatus.classList.add('text-red-600');
+                loadingSpinner.style.display = 'none';
+            }
+        }
+        
+        // Process tickets file
+        function processTicketsFile(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        gameState.ticketsData = processTicketsData(workbook);
+                        resolve();
+                    } catch (error) {
+                        console.error("Error processing tickets file:", error);
+                        reject(error);
                     }
                 };
-                
-                xhr.onerror = function() {
-                    reject(new Error(`Network error while loading ${filename}`));
-                };
-                
-                xhr.send();
+                reader.onerror = reject;
+                reader.readAsArrayBuffer(blob);
             });
         }
         
-        // Check if we can enable the start button
-        function checkStartButtonState() {
-            if (gameState.selectedTrain) {
-                startGameBtn.disabled = false;
-            } else {
-                startGameBtn.disabled = true;
-            }
+        // Process connections file
+        function processConnectionsFile(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        gameState.connectionsData = processConnectionsData(workbook);
+                        resolve();
+                    } catch (error) {
+                        console.error("Error processing connections file:", error);
+                        reject(error);
+                    }
+                };
+                reader.onerror = reject;
+                reader.readAsArrayBuffer(blob);
+            });
         }
         
-        // Start the game
-        function startGame() {
-            // Check if we have valid data
-            if (gameState.ticketsData.length === 0) {
-                alert("Keine gültigen Fahrkartendaten gefunden. Bitte überprüfe die Excel-Datei.");
+        // Show train selectors
+        function showTrainSelectors() {
+            // Hide loading section
+            loadingSection.classList.add('hidden');
+            
+            // Show train selection
+            trainSelectionContainer.classList.remove('hidden');
+            
+            // Clear existing selectors
+            trainSelectors.innerHTML = '';
+            
+            // Add train selectors based on available connections
+            const trainLines = Object.keys(gameState.connectionsData);
+            
+            if (trainLines.length === 0) {
+                trainSelectors.innerHTML = '<p class="col-span-full text-red-600">Keine Zugverbindungen gefunden</p>';
                 return;
             }
             
-            if (!gameState.connectionsData[gameState.selectedTrain] || 
-                gameState.connectionsData[gameState.selectedTrain].length === 0) {
-                alert(`Keine gültigen Verbindungsdaten für ${gameState.selectedTrain} gefunden. Bitte überprüfe die Excel-Datei.`);
-                return;
-            }
-            
-            // Hide setup screen and show game screen
-            setupScreen.classList.add('hidden');
-            gameScreen.classList.remove('hidden');
-            
-            // Update current train display
-            currentTrainElement.textContent = `Zugverbindung: ${gameState.selectedTrain}`;
-            
-            // Initialize the game
-            initGame();
+            trainLines.forEach(trainLine => {
+                const selector = document.createElement('button');
+                selector.className = 'train-selector p-3 text-center';
+                selector.dataset.train = trainLine;
+                selector.innerHTML = `<div class="font-bold">${trainLine}</div>`;
+                
+                selector.addEventListener('click', () => {
+                    // Remove selected class from all selectors
+                    document.querySelectorAll('.train-selector').forEach(s => s.classList.remove('selected'));
+                    
+                    // Add selected class to clicked selector
+                    selector.classList.add('selected');
+                    
+                    // Update selected train
+                    gameState.selectedTrain = trainLine;
+                    selectedTrainName.textContent = gameState.selectedTrain;
+                    selectedTrainInfo.classList.remove('hidden');
+                    
+                    // Enable the start button
+                    startGameBtn.disabled = false;
+                });
+                
+                trainSelectors.appendChild(selector);
+            });
         }
         
         // Process tickets data from Excel
@@ -808,6 +816,31 @@
             });
             
             return processedData;
+        }
+        
+        // Start the game
+        function startGame() {
+            // Check if we have valid data
+            if (!gameState.ticketsData || gameState.ticketsData.length === 0) {
+                alert("Keine gültigen Fahrkartendaten gefunden. Bitte versuche es später erneut.");
+                return;
+            }
+            
+            if (!gameState.connectionsData[gameState.selectedTrain] || 
+                gameState.connectionsData[gameState.selectedTrain].length === 0) {
+                alert(`Keine gültigen Verbindungsdaten für ${gameState.selectedTrain} gefunden. Bitte wähle eine andere Zugverbindung.`);
+                return;
+            }
+            
+            // Hide setup screen and show game screen
+            setupScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            
+            // Update current train display
+            currentTrainElement.textContent = `Zugverbindung: ${gameState.selectedTrain}`;
+            
+            // Initialize the game
+            initGame();
         }
         
         // Initialize game
@@ -881,7 +914,6 @@
             document.getElementById('passenger-age').textContent = `${age} Jahre`;
             document.getElementById('passenger-initial').textContent = initialLetter;
             document.getElementById('passenger-companions').textContent = "Allein reisend";
-            document.getElementById('passenger-id').textContent = generateRandomID();
             
             // Hide ticket container
             document.getElementById('ticket-container').style.display = 'none';
@@ -926,7 +958,6 @@
             // Set companions based on ticket
             const companions = parsePersonCount(ticket.personCount);
             document.getElementById('passenger-companions').textContent = companions;
-            document.getElementById('passenger-id').textContent = generateRandomID();
             
             // Update ticket display
             document.getElementById('ticket-container').style.display = 'block';
@@ -969,6 +1000,30 @@
                 if (gameState.invalidReasons.length === 0) {
                     gameState.invalidReasons.push("Fahrkarte entspricht nicht den Anforderungen");
                 }
+            }
+        }
+        
+        // Parse person count
+        function parsePersonCount(personCount) {
+            if (personCount === "1") {
+                return "Allein reisend";
+            } else if (personCount.includes("+")) {
+                const parts = personCount.split("+");
+                const adults = parseInt(parts[0]) || 1;
+                const children = parseInt(parts[1]) || 0;
+                
+                let result = "";
+                if (adults > 0) {
+                    result += `${adults} ${adults === 1 ? "Erwachsener" : "Erwachsene"}`;
+                }
+                if (children > 0) {
+                    if (result) result += ", ";
+                    result += `${children} ${children === 1 ? "Kind" : "Kinder"}`;
+                }
+                return result;
+            } else {
+                const count = parseInt(personCount) || 1;
+                return `${count} ${count === 1 ? "Person" : "Personen"}`;
             }
         }
         
@@ -1326,7 +1381,7 @@
                     showNoTicketModal();
                 } else {
                     // User incorrectly marked as valid
-                    showResultAnimation(false, "Falsch! Der Fahrgast hat keine Fahrkarte.");
+                    showErrorModal("Fehler", "Der Fahrgast hat keine Fahrkarte!");
                     updateScore(false);
                 }
             } else {
@@ -1335,24 +1390,25 @@
                 
                 if (correctDecision) {
                     // User made the correct decision
-                    showResultAnimation(true, userDecision ? "Richtig! Die Fahrkarte ist gültig." : "Richtig! Die Fahrkarte ist ungültig.");
                     updateScore(true);
+                    // Generate new passenger immediately for correct decisions
+                    generateNewPassenger();
                 } else {
                     // User made the wrong decision
-                    showResultAnimation(false, userDecision ? "Falsch! Die Fahrkarte ist ungültig." : "Falsch! Die Fahrkarte ist gültig.");
-                    updateScore(false);
+                    if (userDecision) {
+                        // User incorrectly marked an invalid ticket as valid
+                        showErrorModal("Ungültige Fahrkarte", "Diese Fahrkarte ist nicht gültig!");
+                        updateScore(false);
+                    } else {
+                        // User incorrectly marked a valid ticket as invalid
+                        showErrorModal("Gültige Fahrkarte", "Diese Fahrkarte ist gültig! Du hast einen Fehler gemacht.");
+                        updateScore(false);
+                    }
                 }
                 
-                // If user marked as invalid, show the invalid modal
-                if (!userDecision && !correctDecision) {
-                    // Only show modal if user incorrectly marked a valid ticket as invalid
+                // If user marked as invalid and ticket is actually invalid, show the invalid modal
+                if (!userDecision && !gameState.isTicketValid) {
                     showInvalidModal();
-                } else if (!userDecision && correctDecision) {
-                    // User correctly marked an invalid ticket as invalid
-                    showInvalidModal();
-                } else {
-                    // Generate new passenger after a delay
-                    setTimeout(generateNewPassenger, 1500);
                 }
             }
         }
@@ -1395,14 +1451,14 @@
             
             if (!gameState.isTicketValid) {
                 // Ticket is actually invalid
-                showResultAnimation(true, action === 'writeUp' ? "Richtig! Bußgeld ausgestellt." : "Richtig! Polizei gerufen.");
+                updateScore(true);
             } else {
                 // Ticket is actually valid
-                showResultAnimation(false, action === 'writeUp' ? "Falsch! Die Fahrkarte war gültig." : "Falsch! Die Fahrkarte war gültig.");
+                updateScore(false);
             }
             
-            // Generate new passenger after a delay
-            setTimeout(generateNewPassenger, 1500);
+            // Generate new passenger
+            generateNewPassenger();
         }
         
         // Handle action for passenger with no ticket
@@ -1412,25 +1468,21 @@
             if (gameState.isPassengerAggressive) {
                 // Aggressive passenger
                 if (action === 'police') {
-                    showResultAnimation(true, "Richtig! Bei aggressivem Verhalten ist die Polizei die richtige Wahl.");
                     updateScore(true);
                 } else {
-                    showResultAnimation(false, "Falsch! Bei aggressivem Verhalten sollte die Polizei gerufen werden.");
                     updateScore(false);
                 }
             } else {
                 // Cooperative passenger
                 if (action === 'writeUp') {
-                    showResultAnimation(true, "Richtig! Bußgeld ausgestellt.");
                     updateScore(true);
                 } else {
-                    showResultAnimation(false, "Falsch! Die Polizei zu rufen war nicht notwendig.");
                     updateScore(false);
                 }
             }
             
-            // Generate new passenger after a delay
-            setTimeout(generateNewPassenger, 1500);
+            // Generate new passenger
+            generateNewPassenger();
         }
         
         // Show invalid ticket modal
@@ -1469,16 +1521,16 @@
                     "Der Fahrgast verweigert die Angabe seiner Personalien und wird laut.",
                     "Der Fahrgast droht: \"Wenn Sie mich nicht in Ruhe lassen, werden Sie es bereuen!\""
                 ];
-                passengerReaction.innerHTML = `<p class="text-red-800 font-medium">${reactions[Math.floor(Math.random() * reactions.length)]}</p>`;
+                passengerReaction.textContent = reactions[Math.floor(Math.random() * reactions.length)];
             } else {
                 const reactions = [
-                    "Der Fahrgast entschuldigt sich: \"Es tut mir leid, ich habe vergessen, ein Ticket zu kaufen.\"",
-                    "Der Fahrgast zeigt Verständnis: \"Ich verstehe, dass ich ein Bußgeld zahlen muss.\"",
-                    "Der Fahrgast erklärt: \"Ich hatte es eilig und keine Zeit, ein Ticket zu kaufen.\"",
-                    "Der Fahrgast kooperiert: \"Hier ist mein Ausweis, ich zahle das Bußgeld.\"",
-                    "Der Fahrgast ist einsichtig: \"Das war mein Fehler, es wird nicht wieder vorkommen.\""
+                    "Der Fahrgast entschuldigt sich: \"Es tut mir leid, ich habe vergessen ein Ticket zu kaufen.\"",
+                    "Der Fahrgast wirkt nervös: \"Oh, ich dachte, ich hätte ein Ticket gekauft...\"",
+                    "Der Fahrgast kooperiert: \"Ich verstehe, was muss ich jetzt tun?\"",
+                    "Der Fahrgast zeigt Reue: \"Das ist mir noch nie passiert, es tut mir wirklich leid.\"",
+                    "Der Fahrgast ist bereit zu zahlen: \"Kann ich das Ticket jetzt noch nachlösen?\""
                 ];
-                passengerReaction.innerHTML = `<p class="text-gray-800">${reactions[Math.floor(Math.random() * reactions.length)]}</p>`;
+                passengerReaction.textContent = reactions[Math.floor(Math.random() * reactions.length)];
             }
             
             noTicketModal.classList.remove('hidden');
@@ -1496,18 +1548,34 @@
             
             setTimeout(() => {
                 noTicketModal.classList.add('hidden');
+                // Generate new passenger
+                setTimeout(generateNewPassenger, 500);
             }, 300);
         }
         
-        // Show result animation
-        function showResultAnimation(isCorrect, message) {
-            resultAnimation.textContent = message;
-            resultAnimation.style.backgroundColor = isCorrect ? '#10b981' : '#ef4444';
-            resultAnimation.classList.add('show');
+        // Show error modal
+        function showErrorModal(title, message) {
+            errorModalTitle.textContent = title;
+            errorModalMessage.textContent = message;
+            
+            errorModal.classList.remove('hidden');
+            setTimeout(() => {
+                errorModal.querySelector('.modal-content').style.opacity = '1';
+                errorModal.querySelector('.modal-content').style.transform = 'scale(1)';
+            }, 10);
+        }
+        
+        // Close error modal
+        function closeErrorModalHandler() {
+            const modalContent = errorModal.querySelector('.modal-content');
+            modalContent.style.opacity = '0';
+            modalContent.style.transform = 'scale(0.9)';
             
             setTimeout(() => {
-                resultAnimation.classList.remove('show');
-            }, 1500);
+                errorModal.classList.add('hidden');
+                // Generate new passenger
+                setTimeout(generateNewPassenger, 500);
+            }, 300);
         }
         
         // Update score and progress
@@ -1549,24 +1617,6 @@
                 return count === 1 ? "Allein reisend" : `${count} ${count === 1 ? 'Erwachsener' : 'Erwachsene'}`;
             }
         }
-        
-        // Generate random ID
-        function generateRandomID() {
-            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            const numbers = "0123456789";
-            let id = "";
-            
-            // Format: XX123456789
-            id += letters.charAt(Math.floor(Math.random() * letters.length));
-            id += letters.charAt(Math.floor(Math.random() * letters.length));
-            
-            for (let i = 0; i < 9; i++) {
-                id += numbers.charAt(Math.floor(Math.random() * numbers.length));
-            }
-            
-            return id;
-        }
-        
         // Initialize the setup when the page loads
         window.addEventListener('DOMContentLoaded', initSetup);
     </script>
